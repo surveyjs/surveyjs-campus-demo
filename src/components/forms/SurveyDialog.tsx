@@ -15,6 +15,7 @@ interface SurveyDialogProps {
   onSave: (data: Record<string, unknown>) => Promise<void>;
   onCustomize?: () => void;
   customizeLabel?: string;
+  prefill?: Record<string, unknown>;
   configure?: (model: Model) => void;
 }
 
@@ -32,6 +33,7 @@ export const SurveyDialog: React.FC<SurveyDialogProps> = ({
   onSave,
   onCustomize,
   customizeLabel = 'Customize Form',
+  prefill,
   configure,
 }) => {
   const schema = useFormSchema(formId);
@@ -45,6 +47,7 @@ export const SurveyDialog: React.FC<SurveyDialogProps> = ({
         schema={schema}
         data={data}
         actions={actions}
+        prefill={prefill}
         configure={configure}
         onSave={(answers, model) => {
           if (pending.current) return;

@@ -2,6 +2,7 @@ import {
   AdvisingMeeting,
   CampusEvent,
   Course,
+  Residence,
   Department,
   Programme,
   StaffMember,
@@ -16,8 +17,10 @@ import {
   advisingFromSurvey,
   courseFromSurvey,
   courseRegistrationFromSurvey,
+  allocationFromSurvey,
   eventFromSurvey,
   eventRegistrationFromSurvey,
+  residenceFromSurvey,
   studentFromSurvey,
   Submission,
   supportFromSurvey,
@@ -47,8 +50,9 @@ export const campusRepository = {
     return () => listeners.delete(listener);
   },
 
-  students(query?: { surname?: string; dateOfBirth?: string; studentNumber?: string }) {
+  students(query?: { name?: string; surname?: string; dateOfBirth?: string; studentNumber?: string }) {
     const params = new URLSearchParams();
+    if (query?.name) params.set('name', query.name);
     if (query?.surname) params.set('surname', query.surname);
     if (query?.dateOfBirth) params.set('dateOfBirth', query.dateOfBirth);
     if (query?.studentNumber) params.set('studentNumber', query.studentNumber);
@@ -92,6 +96,21 @@ export const campusRepository = {
       `/events/${eventId}/registrations`,
       'POST',
       envelope('event-registration', data, eventRegistrationFromSurvey(data)),
+    ),
+
+  residences: () => api<Residence[]>('/residences'),
+  residence: (id: string) => api<Residence>(`/residences/${id}`),
+  saveResidence: (data: Record<string, unknown>, residenceId?: string) =>
+    submit<Residence>(
+      residenceId ? `/residences/${residenceId}` : '/residences',
+      residenceId ? 'PUT' : 'POST',
+      envelope('accommodation-admin', data, residenceFromSurvey(data)),
+    ),
+  allocateResidence: (residenceId: string, data: Record<string, unknown>) =>
+    submit<Residence>(
+      `/residences/${residenceId}/allocations`,
+      'POST',
+      envelope('accommodation-application', data, allocationFromSurvey(data)),
     ),
 
   saveAdvising: (studentId: string, data: Record<string, unknown>, meetingId?: string) =>

@@ -39,7 +39,7 @@
           "name": "remember_me",
           "title": "Keep me signed in on this device",
           "titleLocation": "hidden",
-          "displayMode": "checkbox"
+          "displayMode": "switch"
         }
       ]
     }

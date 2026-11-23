@@ -25,6 +25,7 @@
         {
           "type": "boolean",
           "name": "prerequisite_confirmation",
+          "displayMode": "switch",
           "title": "The student meets the course prerequisites",
           "isRequired": true,
           "validators": [

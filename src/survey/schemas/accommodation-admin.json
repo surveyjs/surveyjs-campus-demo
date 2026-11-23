@@ -1,0 +1,32 @@
+{
+  "title": "Hall of Residence",
+  "pages": [
+    {
+      "name": "hall",
+      "elements": [
+        { "type": "text", "name": "name", "title": "Hall name", "isRequired": true },
+        {
+          "type": "dropdown",
+          "name": "category",
+          "title": "Hall type",
+          "isRequired": true,
+          "choices": ["Catered", "Self-catered", "Accessible"]
+        },
+        { "type": "comment", "name": "description", "title": "Description", "rows": 3 },
+        { "type": "text", "name": "location", "title": "Location", "isRequired": true },
+        { "type": "text", "name": "weekly_rate", "title": "Weekly rate (£)", "isRequired": true, "inputType": "number", "min": 0 },
+        { "type": "text", "name": "capacity", "title": "Capacity", "isRequired": true, "inputType": "number", "min": 1 },
+        {
+          "type": "dropdown",
+          "name": "status",
+          "title": "Status",
+          "isRequired": true,
+          "defaultValue": "Open",
+          "choices": ["Open", "Closed"]
+        }
+      ]
+    }
+  ],
+  "completeText": "Save Hall",
+  "headerView": "basic"
+}

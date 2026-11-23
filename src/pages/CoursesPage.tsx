@@ -8,6 +8,7 @@ import { FormId } from '../types/forms';
 import { canManageCatalog, canRegisterCourses } from '../ui/access';
 import { Breadcrumbs, Button, emptyPanelClass, PageHeading, panelClass, PanelHeading, Pill, useDocumentTitle } from '../ui/components';
 import { placesLabel } from '../ui/format';
+import { demoPrefill } from '../survey/demoPrefill';
 
 interface CoursesPageProps {
   user: AuthUser;
@@ -24,6 +25,11 @@ export const CoursesPage: React.FC<CoursesPageProps> = ({ user, onOpenFormBuilde
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [dialog, setDialog] = useState<DialogState | null>(null);
+  const openBuilder = (formId: FormId, next: DialogState) => {
+    setDialog(null);
+    onOpenFormBuilder(formId, () => setDialog(next));
+  };
+  const customize = canManageCatalog(user.role) ? openBuilder : undefined;
   const course = courses.find((item) => item.id === courseId);
   useDocumentTitle(course ? course.courseCode : 'Courses');
 
@@ -147,8 +153,9 @@ export const CoursesPage: React.FC<CoursesPageProps> = ({ user, onOpenFormBuilde
                 }
               : { status: 'Active' }
           }
+          prefill={dialog.course ? undefined : demoPrefill.newCourse}
           onClose={() => setDialog(null)}
-          onCustomize={() => onOpenFormBuilder('course-admin', () => setDialog(dialog))}
+          onCustomize={customize && (() => customize('course-admin', dialog))}
           onSave={async (data) => {
             await campusRepository.saveCourse(data, dialog.course?.id);
             showToast('Course saved.');
@@ -167,8 +174,9 @@ export const CoursesPage: React.FC<CoursesPageProps> = ({ user, onOpenFormBuilde
           heading={`Register for ${dialog.course.courseCode}`}
           description={placesLabel(dialog.course.availablePlaces, dialog.course.capacity)}
           data={{ course_code: dialog.course.courseCode, student_number: ownStudentNumber ?? '' }}
+          prefill={demoPrefill.courseRegistration}
           onClose={() => setDialog(null)}
-          onCustomize={() => onOpenFormBuilder('course-registration', () => setDialog(dialog))}
+          onCustomize={customize && (() => customize('course-registration', dialog))}
           configure={(model) => {
             const question = model.getQuestionByName('course_code');
             if (question) question.readOnly = true;

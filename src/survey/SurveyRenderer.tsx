@@ -2,8 +2,8 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import { IAction, Model } from 'survey-core';
 import { Survey } from 'survey-react-ui';
 import 'survey-core/survey-core.min.css';
-import './tailwind-adapter.css';
-import { applyClinicFormTheme, registerClinicModel } from '../theme/campusTheme';
+import 'survey-core/themes/adapters/shadcn-base-nova.css';
+import 'survey-core/themes/adapters/icons/lucide';
 import { demoTools } from '../theme/demoTools';
 
 export type SurveyNavigationAction = Partial<IAction> & { id: string };
@@ -19,6 +19,8 @@ export interface SurveyRendererProps {
   onValueChanged?: (data: Record<string, any>, model: Model) => void;
   /** Extra footer navigation items, rendered after the Complete button. */
   actions?: SurveyNavigationAction[];
+  /** Sample answers for the Prefill Demo Data button. Read-only questions keep their current values. */
+  prefill?: Record<string, unknown>;
   readOnly?: boolean;
   hideTitle?: boolean;
   showNavigation?: boolean;
@@ -27,7 +29,7 @@ export interface SurveyRendererProps {
   onModelReady?: (model: Model) => void;
 }
 
-/** Renders a SurveyJS form with the shared campus theme, matching the host's `.native-survey` mount point. */
+/** Renders a SurveyJS form. Colors come from the shadcn adapter and the host tokens. */
 export const SurveyRenderer: React.FC<SurveyRendererProps> = ({
   id,
   schema,
@@ -35,6 +37,7 @@ export const SurveyRenderer: React.FC<SurveyRendererProps> = ({
   onSave,
   onValueChanged,
   actions = [],
+  prefill,
   readOnly = false,
   hideTitle = false,
   showNavigation = true,
@@ -45,10 +48,6 @@ export const SurveyRenderer: React.FC<SurveyRendererProps> = ({
   // Handlers are read through refs so a re-render never rebuilds the model.
   const handlers = useRef({ onSave, onValueChanged, actions });
   handlers.current = { onSave, onValueChanged, actions };
-  const themeOptions = useMemo(
-    () => ({ host: id, dynamicPanels: JSON.stringify(schema).includes('paneldynamic') }),
-    [id, schema],
-  );
 
   const model = useMemo(() => {
     const m = new Model({
@@ -62,13 +61,32 @@ export const SurveyRenderer: React.FC<SurveyRendererProps> = ({
       mode: readOnly ? 'display' : 'edit',
     });
     m.elementIdPrefix = id + '-';
-    applyClinicFormTheme(m, themeOptions);
     if (data) m.data = { ...m.data, ...structuredClone(data) };
     m.onCompleting.add((sender, options) => {
       options.allow = false;
       handlers.current.onSave?.(structuredClone(sender.data), sender);
     });
     m.onValueChanged.add((sender) => handlers.current.onValueChanged?.(sender.data, sender));
+    if (prefill) {
+      const sample = prefill;
+      m.addNavigationItem({
+        id: 'prefill-demo-data',
+        title: 'Prefill Demo Data',
+        visibleIndex: 40,
+        showTitle: true,
+        disableShrink: true,
+        action: () => {
+          const active = document.activeElement;
+          if (active instanceof HTMLElement) active.blur();
+          const next: Record<string, unknown> = { ...sample };
+          m.getAllQuestions().forEach((question) => {
+            if (question.readOnly) delete next[question.name];
+          });
+          Object.entries(next).forEach(([name, value]) => m.setValue(name, value));
+          m.clearErrors();
+        },
+      });
+    }
     actions.forEach((action, index) =>
       m.addNavigationItem({
         visibleIndex: 60 + index * 10,
@@ -77,12 +95,13 @@ export const SurveyRenderer: React.FC<SurveyRendererProps> = ({
       }),
     );
     configure?.(m);
+    m.getAllQuestions().forEach((question) => {
+      if (question.getType() === 'boolean') question.displayMode = 'switch';
+    });
     return m;
     // The model is rebuilt only for a new schema or display mode, like the designer's render().
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, schema, readOnly, hideTitle, showNavigation, themeOptions]);
-
-  useEffect(() => registerClinicModel(model, themeOptions), [model, themeOptions]);
+  }, [id, schema, readOnly, hideTitle, showNavigation, prefill]);
 
   useEffect(() => {
     onModelReady?.(model);

@@ -230,6 +230,48 @@ export const INITIAL_EVENTS = [
   },
 ];
 
+export const INITIAL_RESIDENCES = [
+  {
+    id: 'hall-north',
+    name: 'North Court',
+    category: 'Catered',
+    description: 'Catered study bedrooms beside the library.',
+    location: 'North Campus',
+    weeklyRate: 168,
+    capacity: 120,
+    status: 'open',
+    baselineOccupancy: 86,
+  },
+  {
+    id: 'hall-library',
+    name: 'Library Lane House',
+    category: 'Self-catered',
+    description: 'Shared flats a short walk from the School of Computer Science.',
+    location: 'Library Lane',
+    weeklyRate: 142,
+    capacity: 48,
+    status: 'open',
+    baselineOccupancy: 20,
+  },
+  {
+    id: 'hall-west',
+    name: 'West Annex',
+    category: 'Accessible',
+    description: 'Ensuite studios with step-free access. This hall is full.',
+    location: 'West Quad',
+    weeklyRate: 186,
+    capacity: 12,
+    status: 'open',
+    baselineOccupancy: 12,
+  },
+];
+
+export const INITIAL_ALLOCATIONS = [
+  { id: 'ha-emma', studentId: 'stu-emma', residenceId: 'hall-north', roomType: 'Single', contract: 'Full year', notes: '' },
+  { id: 'ha-liam', studentId: 'stu-liam', residenceId: 'hall-north', roomType: 'Shared', contract: 'Full year', notes: '' },
+  { id: 'ha-priya', studentId: 'stu-priya', residenceId: 'hall-library', roomType: 'Single', contract: 'Full year', notes: '' },
+];
+
 export const INITIAL_EVENT_REGISTRATIONS = [
   { id: 'er-emma-career', studentId: 'stu-emma', eventId: 'event-career', areaOfInterest: 'Careers', notes: '' },
   { id: 'er-liam-career', studentId: 'stu-liam', eventId: 'event-career', areaOfInterest: 'Careers', notes: '' },

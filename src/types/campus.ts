@@ -95,6 +95,7 @@ export interface StudentProfile extends Student {
   courses: CourseRegistration[];
   advising: AdvisingMeeting[];
   supportRequests: SupportRequest[];
+  accommodation: HallPlace[];
 }
 
 export interface CoursePrerequisite {
@@ -202,6 +203,66 @@ export interface SupportInput {
 export interface SupportUpdateInput {
   status: string;
   assignedTo: string;
+}
+
+export interface HallPlace {
+  id: string;
+  residenceId: string;
+  residenceName: string;
+  category: string;
+  roomType: string;
+  contract: string;
+  notes: string;
+  status: string;
+  startDate: string;
+}
+
+export interface HallResident {
+  id: string;
+  studentId: string;
+  studentNumber: string;
+  studentName: string;
+  roomType: string;
+  contract: string;
+  notes: string;
+  startDate: string;
+  status: string;
+}
+
+export interface Residence {
+  id: string;
+  name: string;
+  label: string;
+  category: string;
+  description: string;
+  location: string;
+  weeklyRate: number;
+  capacity: number;
+  occupied: number;
+  availablePlaces: number;
+  status: string;
+  occupancyStatus: string;
+  baselineOccupancy: number;
+  residents: HallResident[];
+}
+
+export interface ResidenceInput {
+  name: string;
+  category: string;
+  description: string;
+  location: string;
+  weeklyRate: number;
+  capacity: number;
+  status: string;
+}
+
+export interface AllocationInput {
+  studentNumber: string;
+  residenceId: string;
+  roomType: string;
+  contract: string;
+  notes: string;
+  termsConfirmation: boolean;
 }
 
 export interface StaffMember {

@@ -38,7 +38,7 @@ export const Dialog: React.FC<DialogProps> = ({ label, className = '', onClose, 
   return (
     <dialog
       ref={ref}
-      className={cx('overscroll-contain bg-card text-foreground backdrop:bg-[#1b283855] backdrop:backdrop-blur-[2px]', className)}
+      className={cx('overscroll-contain bg-card text-foreground backdrop:bg-foreground/35 backdrop:backdrop-blur-[2px]', className)}
       aria-label={label}
     >
       {children}

@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { Model, SurveyError } from 'survey-core';
 import { useNavigate } from 'react-router-dom';
 import { campusRepository } from '../repositories/campusRepository';
+import { demoPrefill } from '../survey/demoPrefill';
 import { SurveyRenderer } from '../survey/SurveyRenderer';
 import { FormId } from '../types/forms';
 import { editFormAction, PageHeading, panelClass, useDocumentTitle, useFormSchema } from '../ui/components';
@@ -28,6 +29,7 @@ export const RegisterStudentPage: React.FC<RegisterStudentPageProps> = ({ onOpen
         <SurveyRenderer
           id="student-registration"
           schema={schema}
+          prefill={demoPrefill.studentRegistration}
           actions={[editFormAction('student-registration', 'Customize Form', () => onOpenFormBuilder('student-registration'))]}
           onSave={(data, model) => {
             if (pending.current) return;

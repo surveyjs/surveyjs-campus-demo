@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import { AppShell } from './components/layout/AppShell';
 import { Toast } from './components/common/Toast';
+import { AccommodationPage } from './pages/AccommodationPage';
 import { CoursesPage } from './pages/CoursesPage';
 import { EventsPage } from './pages/EventsPage';
 import { LoginPage } from './pages/LoginPage';
@@ -84,7 +85,10 @@ export default function App() {
     routes = (
       <Routes>
         {currentUser.role !== 'student' && (
-          <Route path="/manage" element={<ManageStudentsPage onOpenFormBuilder={openFormBuilder} />} />
+          <Route
+            path="/manage"
+            element={<ManageStudentsPage canCustomize={currentUser.role === 'administrator'} onOpenFormBuilder={openFormBuilder} />}
+          />
         )}
         {currentUser.role === 'administrator' && (
           <Route
@@ -123,6 +127,14 @@ export default function App() {
           path="/events/:eventId"
           element={<EventsPage user={currentUser} onOpenFormBuilder={openFormBuilder} showToast={showToast} ownStudentNumber={ownStudentNumber} />}
         />
+        <Route
+          path="/accommodation"
+          element={<AccommodationPage user={currentUser} onOpenFormBuilder={openFormBuilder} showToast={showToast} ownStudentNumber={ownStudentNumber} />}
+        />
+        <Route
+          path="/accommodation/:residenceId"
+          element={<AccommodationPage user={currentUser} onOpenFormBuilder={openFormBuilder} showToast={showToast} ownStudentNumber={ownStudentNumber} />}
+        />
         <Route path="*" element={<Navigate to={home} replace />} />
       </Routes>
     );
@@ -139,8 +151,10 @@ export default function App() {
           key={builderFormId}
           formId={builderFormId}
           onClose={() => {
+            const restoreView = builderReturnRef.current;
             builderReturnRef.current = null;
             setBuilderFormId(null);
+            restoreView?.();
           }}
           onApplied={() => {
             setBuilderFormId(null);

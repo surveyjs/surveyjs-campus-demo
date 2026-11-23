@@ -2,8 +2,10 @@ import {
   AdvisingInput,
   CourseInput,
   CourseRegistrationInput,
+  AllocationInput,
   EventInput,
   EventRegistrationInput,
+  ResidenceInput,
   StudentInput,
   SupportInput,
   SupportUpdateInput,
@@ -93,6 +95,30 @@ export function eventFromSurvey(data: Record<string, unknown>): EventInput {
     location: text(data.location),
     capacity: Number(data.capacity),
     status: status === 'cancelled' ? 'cancelled' : 'open',
+  };
+}
+
+export function allocationFromSurvey(data: Record<string, unknown>): AllocationInput {
+  return {
+    studentNumber: text(data.student_number),
+    residenceId: text(data.residence_id),
+    roomType: text(data.room_type),
+    contract: text(data.contract),
+    notes: text(data.notes),
+    termsConfirmation: checked(data.terms_confirmation),
+  };
+}
+
+export function residenceFromSurvey(data: Record<string, unknown>): ResidenceInput {
+  const status = text(data.status).toLowerCase();
+  return {
+    name: text(data.name),
+    category: text(data.category),
+    description: text(data.description),
+    location: text(data.location),
+    weeklyRate: Number(data.weekly_rate),
+    capacity: Number(data.capacity),
+    status: status === 'closed' ? 'closed' : 'open',
   };
 }
 

@@ -6,4 +6,5 @@ export const canAdvise = (role: UserRole) => role === 'administrator' || role ==
 export const canUpdateSupport = (role: UserRole) => role === 'administrator' || role === 'support';
 export const canRegisterEvents = (role: UserRole) => role === 'administrator' || role === 'academic' || role === 'student';
 export const canManageCatalog = (role: UserRole) => role === 'administrator';
+export const canAllocateHousing = (role: UserRole) => role === 'administrator' || role === 'support' || role === 'student';
 export const homePath = (role: UserRole) => (role === 'student' ? '/portal' : '/manage');

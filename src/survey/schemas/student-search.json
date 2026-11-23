@@ -8,11 +8,11 @@
       "elements": [
         {
           "type": "text",
-          "name": "surname",
-          "title": "Surname",
-          "placeholder": "e.g. Thompson",
+          "name": "name",
+          "title": "Name",
+          "placeholder": "e.g. Emma Thompson",
           "width": "33.333%",
-          "minWidth": "200px",
+          "minWidth": "0",
           "autocomplete": "off"
         },
         {
@@ -22,7 +22,7 @@
           "title": "Date of birth",
           "inputType": "date",
           "width": "33.333%",
-          "minWidth": "200px"
+          "minWidth": "0"
         },
         {
           "type": "text",
@@ -31,7 +31,7 @@
           "title": "Student ID",
           "placeholder": "e.g. STU-1002",
           "width": "33.333%",
-          "minWidth": "200px",
+          "minWidth": "0",
           "autocomplete": "off"
         }
       ]

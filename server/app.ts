@@ -148,6 +148,7 @@ export function createApp(db: CampusDb) {
       res.json(
         db.searchStudents(
           {
+            name: typeof req.query.name === 'string' ? req.query.name : '',
             surname: typeof req.query.surname === 'string' ? req.query.surname : '',
             dateOfBirth: typeof req.query.dateOfBirth === 'string' ? req.query.dateOfBirth : '',
             studentNumber: typeof req.query.studentNumber === 'string' ? req.query.studentNumber : '',
@@ -326,6 +327,45 @@ export function createApp(db: CampusDb) {
     try {
       const body = recordBody(req);
       res.json(db.updateEvent(req.params.id, body.record, (req as AuthedRequest).user, body.formVersionId, body.response));
+    } catch (error) {
+      fail(res, error);
+    }
+  });
+
+  app.get('/api/residences', authenticate, (_req, res) => {
+    res.json(db.residences());
+  });
+
+  app.get('/api/residences/:id', authenticate, (req, res) => {
+    try {
+      res.json(db.residence(req.params.id));
+    } catch (error) {
+      fail(res, error);
+    }
+  });
+
+  app.post('/api/residences', authenticate, allow('administrator'), (req, res) => {
+    try {
+      const body = recordBody(req);
+      res.status(201).json(db.createResidence(body.record, (req as AuthedRequest).user, body.formVersionId, body.response));
+    } catch (error) {
+      fail(res, error);
+    }
+  });
+
+  app.put('/api/residences/:id', authenticate, allow('administrator'), (req, res) => {
+    try {
+      const body = recordBody(req);
+      res.json(db.updateResidence(req.params.id, body.record, (req as AuthedRequest).user, body.formVersionId, body.response));
+    } catch (error) {
+      fail(res, error);
+    }
+  });
+
+  app.post('/api/residences/:id/allocations', authenticate, allow('administrator', 'support', 'student'), (req, res) => {
+    try {
+      const body = recordBody(req);
+      res.status(201).json(db.allocateResidence(req.params.id, body.record, (req as AuthedRequest).user, body.formVersionId, body.response));
     } catch (error) {
       fail(res, error);
     }

@@ -15,16 +15,6 @@ const NavItem: React.FC<{ label: string; path: string; active: boolean }> = ({ l
   </Link>
 );
 
-const DisabledItem: React.FC = () => (
-  <span
-    className="relative flex cursor-not-allowed items-center text-[10px] font-semibold whitespace-nowrap text-muted-foreground opacity-45 sm:text-xs xl:text-[13px]"
-    aria-disabled="true"
-    title="Accommodation is outside this demo"
-  >
-    Accommodation
-  </span>
-);
-
 interface AppShellProps {
   user: AuthUser | null;
   onLogout?: () => void;
@@ -39,7 +29,7 @@ export const AppShell: React.FC<AppShellProps> = ({ user, onLogout, children }) 
   return (
     <>
       <header className="border-b border-border bg-card">
-        <div className="mx-auto flex max-w-312 flex-wrap items-center gap-x-4.5 gap-y-1.5 px-4 pt-2.5 sm:px-5 md:px-6 lg:min-h-16 lg:flex-nowrap lg:gap-6 lg:pt-0 xl:gap-8 xl:px-8">
+        <div className="mx-auto flex max-w-312 flex-wrap items-center gap-x-4 gap-y-1 px-4 py-2 sm:px-5 md:px-6 xl:min-h-16 xl:flex-nowrap xl:gap-6 xl:py-0 xl:px-8">
           <Link
             to={user ? homePath(user.role) : '/login'}
             className="flex shrink-0 items-center gap-2 text-[11px] font-bold tracking-[0.08em] text-primary sm:gap-2.5 sm:text-xs xl:text-sm"
@@ -48,7 +38,7 @@ export const AppShell: React.FC<AppShellProps> = ({ user, onLogout, children }) 
             Acme Campus
           </Link>
           <nav
-            className="order-3 flex min-h-9.5 basis-full justify-between gap-3.5 self-stretch overflow-x-auto sm:min-h-10 sm:justify-start sm:gap-7.5 lg:order-none lg:basis-auto lg:flex-1 lg:gap-5 xl:gap-6.5"
+            className="order-3 flex min-h-9 basis-full flex-wrap items-center gap-x-4 gap-y-1 sm:gap-x-6 xl:order-none xl:min-w-0 xl:basis-auto xl:flex-1 xl:flex-nowrap xl:gap-5"
             aria-label="Primary navigation"
           >
             {!user ? null : student ? (
@@ -56,7 +46,7 @@ export const AppShell: React.FC<AppShellProps> = ({ user, onLogout, children }) 
                 <NavItem label="My Profile" path="/portal" active={at('/portal')} />
                 <NavItem label="Events" path="/events" active={at('/events')} />
                 <NavItem label="Courses" path="/courses" active={at('/courses')} />
-                <DisabledItem />
+                <NavItem label="Accommodation" path="/accommodation" active={at('/accommodation')} />
               </>
             ) : (
               <>
@@ -64,7 +54,7 @@ export const AppShell: React.FC<AppShellProps> = ({ user, onLogout, children }) 
                 {user.role === 'administrator' && <NavItem label="Register Student" path="/register" active={at('/register')} />}
                 <NavItem label="Events" path="/events" active={at('/events')} />
                 <NavItem label="Courses" path="/courses" active={at('/courses')} />
-                <DisabledItem />
+                <NavItem label="Accommodation" path="/accommodation" active={at('/accommodation')} />
               </>
             )}
           </nav>

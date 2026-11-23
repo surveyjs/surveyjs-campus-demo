@@ -8,6 +8,7 @@ import { FormId } from '../types/forms';
 import { canManageCatalog, canRegisterEvents } from '../ui/access';
 import { Breadcrumbs, Button, emptyPanelClass, PageHeading, panelClass, PanelHeading, Pill, useDocumentTitle } from '../ui/components';
 import { formatDate } from '../ui/format';
+import { demoPrefill } from '../survey/demoPrefill';
 
 interface EventsPageProps {
   user: AuthUser;
@@ -25,6 +26,11 @@ export const EventsPage: React.FC<EventsPageProps> = ({ user, onOpenFormBuilder,
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [dialog, setDialog] = useState<DialogState | null>(null);
+  const openBuilder = (formId: FormId, next: DialogState) => {
+    setDialog(null);
+    onOpenFormBuilder(formId, () => setDialog(next));
+  };
+  const customize = canManageCatalog(user.role) ? openBuilder : undefined;
   useDocumentTitle(detail ? detail.name : 'Events');
 
   useEffect(() => {
@@ -207,8 +213,9 @@ export const EventsPage: React.FC<EventsPageProps> = ({ user, onOpenFormBuilder,
                 }
               : { status: 'Open' }
           }
+          prefill={dialog.event ? undefined : demoPrefill.newEvent}
           onClose={() => setDialog(null)}
-          onCustomize={() => onOpenFormBuilder('event-admin', () => setDialog(dialog))}
+          onCustomize={customize && (() => customize('event-admin', dialog))}
           onSave={async (data) => {
             await campusRepository.saveEvent(data, dialog.event?.id);
             showToast('Event saved.');
@@ -220,8 +227,9 @@ export const EventsPage: React.FC<EventsPageProps> = ({ user, onOpenFormBuilder,
           formId="event-registration"
           heading={`Register for ${dialog.event.name}`}
           data={{ student_number: ownStudentNumber ?? '' }}
+          prefill={demoPrefill.eventRegistration}
           onClose={() => setDialog(null)}
-          onCustomize={() => onOpenFormBuilder('event-registration', () => setDialog(dialog))}
+          onCustomize={customize && (() => customize('event-registration', dialog))}
           configure={(model) => {
             if (user.role === 'student') {
               const question = model.getQuestionByName('student_number');

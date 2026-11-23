@@ -9,7 +9,9 @@ export type FormId =
   | 'event-admin'
   | 'advising'
   | 'support-request'
-  | 'support-status';
+  | 'support-status'
+  | 'accommodation-application'
+  | 'accommodation-admin';
 
 export interface FormVersionInfo {
   id: FormId;

@@ -48,11 +48,14 @@ describe('campus API', () => {
     expect(response.status).toBe(401);
   });
 
-  it('searches by surname, date of birth, and student ID', async () => {
+  it('searches by name, date of birth, and student ID', async () => {
     const token = await login('sophie.wilson');
     const bySurname = await api('/students?surname=thompson', undefined, token);
     const surnames = await bySurname.json();
     expect(surnames.map((student: { studentNumber: string }) => student.studentNumber).sort()).toEqual(['STU-1002', 'STU-1077']);
+
+    const byFullName = await api('/students?name=Emma%20Thompson', undefined, token);
+    expect(await byFullName.json()).toMatchObject([{ studentNumber: 'STU-1002' }]);
 
     const byDate = await api('/students?dateOfBirth=2004-04-12', undefined, token);
     expect(await byDate.json()).toMatchObject([{ studentNumber: 'STU-1002' }]);
@@ -322,6 +325,98 @@ describe('campus API', () => {
     const active = (await (await api('/forms')).json()).find((form: { id: string }) => form.id === 'student-registration');
     expect(active.versionId).toBe(version.id);
     expect(active.schema.title).toBe('Custom registration');
+  });
+
+  it('gives one hall place and rejects a full hall', async () => {
+    const token = await login('amira.khan');
+    const halls = await (await api('/residences', undefined, token)).json();
+    const library = halls.find((hall: { id: string }) => hall.id === 'hall-library');
+    const west = halls.find((hall: { id: string }) => hall.id === 'hall-west');
+    expect(library.occupied).toBe(21);
+    expect(west.occupancyStatus).toBe('Full');
+
+    const saved = await api(
+      '/residences/hall-library/allocations',
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          record: {
+            studentNumber: 'STU-1150',
+            residenceId: 'hall-library',
+            roomType: 'Shared',
+            contract: 'Semester 1',
+            notes: '',
+            termsConfirmation: true,
+          },
+        }),
+      },
+      token,
+    );
+    expect(saved.status).toBe(201);
+    expect((await saved.json()).occupied).toBe(22);
+
+    const second = await api(
+      '/residences/hall-north/allocations',
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          record: {
+            studentNumber: 'STU-1150',
+            residenceId: 'hall-north',
+            roomType: 'Single',
+            contract: 'Full year',
+            notes: '',
+            termsConfirmation: true,
+          },
+        }),
+      },
+      token,
+    );
+    expect(second.status).toBe(409);
+    expect((await second.json()).error).toContain('already has a hall place');
+
+    const full = await api(
+      '/residences/hall-west/allocations',
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          record: {
+            studentNumber: 'STU-1201',
+            residenceId: 'hall-west',
+            roomType: 'Accessible',
+            contract: 'Full year',
+            notes: '',
+            termsConfirmation: true,
+          },
+        }),
+      },
+      token,
+    );
+    expect(full.status).toBe(409);
+
+    const academic = await login('james.patel');
+    const denied = await api(
+      '/residences/hall-library/allocations',
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          record: {
+            studentNumber: 'STU-1201',
+            residenceId: 'hall-library',
+            roomType: 'Single',
+            contract: 'Full year',
+            notes: '',
+            termsConfirmation: true,
+          },
+        }),
+      },
+      academic,
+    );
+    expect(denied.status).toBe(403);
+
+    const emma = await login('emma.thompson');
+    const profile = await (await api('/students/stu-emma', undefined, emma)).json();
+    expect(profile.accommodation[0].residenceName).toBe('North Court');
   });
 
   it('hides other students from a student account', async () => {

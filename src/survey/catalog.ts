@@ -10,6 +10,8 @@ import eventAdmin from './schemas/event-admin.json';
 import advising from './schemas/advising.json';
 import supportRequest from './schemas/support-request.json';
 import supportStatus from './schemas/support-status.json';
+import accommodationApplication from './schemas/accommodation-application.json';
+import accommodationAdmin from './schemas/accommodation-admin.json';
 
 export interface FormCatalogEntry {
   id: FormId;
@@ -31,7 +33,7 @@ export const FORM_CATALOG: FormCatalogEntry[] = [
     id: 'student-search',
     name: 'Student Search',
     category: 'Student Search',
-    description: 'Search students by surname, date of birth, or student ID.',
+    description: 'Search students by name, date of birth, or student ID.',
     schema: studentSearch,
   },
   {
@@ -96,6 +98,20 @@ export const FORM_CATALOG: FormCatalogEntry[] = [
     category: 'Student Support',
     description: 'Update the status of a support request.',
     schema: supportStatus,
+  },
+  {
+    id: 'accommodation-application',
+    name: 'Hall Application',
+    category: 'Accommodation',
+    description: 'Request a place in a hall of residence.',
+    schema: accommodationApplication,
+  },
+  {
+    id: 'accommodation-admin',
+    name: 'Hall Administration',
+    category: 'Accommodation',
+    description: 'Create or edit a hall of residence.',
+    schema: accommodationAdmin,
   },
 ];
 

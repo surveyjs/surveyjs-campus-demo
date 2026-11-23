@@ -6,7 +6,8 @@ import { campusRepository } from '../repositories/campusRepository';
 import { AdvisingMeeting, StudentProfile, SupportRequest } from '../types/campus';
 import { AuthUser } from '../types/auth';
 import { FormId } from '../types/forms';
-import { canAdvise, canEditStudents, canRegisterCourses, canUpdateSupport } from '../ui/access';
+import { canAdvise, canAllocateHousing, canEditStudents, canManageCatalog, canRegisterCourses, canUpdateSupport } from '../ui/access';
+import { demoPrefill } from '../survey/demoPrefill';
 import { Breadcrumbs, Button, emptyPanelClass, PageHeading, panelClass, PanelHeading, Pill, useDocumentTitle } from '../ui/components';
 import { formatDate, fullName } from '../ui/format';
 import { studentToSurvey } from '../repositories/surveyMapping';
@@ -25,6 +26,7 @@ type DialogState =
   | { kind: 'support' }
   | { kind: 'support-status'; request: SupportRequest }
   | { kind: 'course' }
+  | { kind: 'hall' }
   | { kind: 'delete' };
 
 function Facts({ items }: { items: [string, string][] }) {
@@ -90,7 +92,11 @@ export const StudentProfilePage: React.FC<StudentProfilePageProps> = ({
     if (typeFilter && request.requestType !== typeFilter) return false;
     return true;
   });
-  const openBuilder = (formId: FormId, next: DialogState) => onOpenFormBuilder(formId, () => setDialog(next));
+  const openBuilder = (formId: FormId, next: DialogState) => {
+    setDialog(null);
+    onOpenFormBuilder(formId, () => setDialog(next));
+  };
+  const customize = canManageCatalog(user.role) ? openBuilder : undefined;
 
   return (
     <>
@@ -113,6 +119,11 @@ export const StudentProfilePage: React.FC<StudentProfilePageProps> = ({
         {canRegisterCourses(user.role) && (
           <Button icon="book" onClick={() => setDialog({ kind: 'course' })}>
             Register for Another Course
+          </Button>
+        )}
+        {canAllocateHousing(user.role) && (
+          <Button icon="home" onClick={() => setDialog({ kind: 'hall' })}>
+            Request a Hall Place
           </Button>
         )}
         {canEditStudents(user.role) && (
@@ -173,6 +184,31 @@ export const StudentProfilePage: React.FC<StudentProfilePageProps> = ({
             </ul>
           ) : (
             <p className="text-sm text-muted-foreground">No course registrations yet.</p>
+          )}
+        </div>
+      </section>
+
+      <section className={`${panelClass} mb-4`}>
+        <PanelHeading title="Accommodation" icon="home" />
+        <div className="px-5 py-5 md:px-6">
+          {profile.accommodation.length ? (
+            <ul className="flex flex-col gap-3">
+              {profile.accommodation.map((place) => (
+                <li key={place.id} className="rounded-md border border-border px-4 py-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <Link to={`/accommodation/${place.residenceId}`} className="font-semibold text-primary">
+                      {place.residenceName}
+                    </Link>
+                    <Pill>{place.status}</Pill>
+                  </div>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {place.category} · {place.roomType} · {place.contract}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-muted-foreground">No hall place yet.</p>
           )}
         </div>
       </section>
@@ -289,7 +325,7 @@ export const StudentProfilePage: React.FC<StudentProfilePageProps> = ({
           heading="Edit Student"
           data={studentToSurvey(profile)}
           onClose={() => setDialog(null)}
-          onCustomize={() => openBuilder('edit-student', dialog)}
+          onCustomize={customize && (() => customize('edit-student', dialog))}
           onSave={async (data) => {
             await campusRepository.updateStudent(profile.id, data);
             showToast('Student updated.');
@@ -312,7 +348,8 @@ export const StudentProfilePage: React.FC<StudentProfilePageProps> = ({
               : undefined
           }
           onClose={() => setDialog(null)}
-          onCustomize={() => openBuilder('advising', dialog)}
+          prefill={dialog.meeting ? undefined : demoPrefill.advising}
+          onCustomize={customize && (() => customize('advising', dialog))}
           onSave={async (data) => {
             await campusRepository.saveAdvising(profile.id, data, dialog.meeting?.id);
             showToast('Advising meeting saved.');
@@ -323,8 +360,9 @@ export const StudentProfilePage: React.FC<StudentProfilePageProps> = ({
         <SurveyDialog
           formId="support-request"
           heading="Create Support Request"
+          prefill={demoPrefill.supportRequest}
           onClose={() => setDialog(null)}
-          onCustomize={() => openBuilder('support-request', dialog)}
+          onCustomize={customize && (() => customize('support-request', dialog))}
           onSave={async (data) => {
             await campusRepository.saveSupport(profile.id, data);
             showToast('Support request created.');
@@ -337,7 +375,7 @@ export const StudentProfilePage: React.FC<StudentProfilePageProps> = ({
           heading="Update Support Request"
           data={{ status: dialog.request.status, assigned_to: dialog.request.assignedTo }}
           onClose={() => setDialog(null)}
-          onCustomize={() => openBuilder('support-status', dialog)}
+          onCustomize={customize && (() => customize('support-status', dialog))}
           onSave={async (data) => {
             await campusRepository.updateSupport(dialog.request.id, data);
             showToast('Support request updated.');
@@ -349,8 +387,9 @@ export const StudentProfilePage: React.FC<StudentProfilePageProps> = ({
           formId="course-registration"
           heading="Register for a Course"
           data={{ student_number: profile.studentNumber }}
+          prefill={demoPrefill.courseRegistration}
           onClose={() => setDialog(null)}
-          onCustomize={() => openBuilder('course-registration', dialog)}
+          onCustomize={customize && (() => customize('course-registration', dialog))}
           configure={(model) => {
             const question = model.getQuestionByName('student_number');
             if (question) question.readOnly = true;
@@ -361,6 +400,26 @@ export const StudentProfilePage: React.FC<StudentProfilePageProps> = ({
             if (!course) throw new Error('Select a course.');
             await campusRepository.registerForCourse(course.id, data);
             showToast('Course registration saved.');
+          }}
+        />
+      )}
+      {dialog?.kind === 'hall' && (
+        <SurveyDialog
+          formId="accommodation-application"
+          heading="Request a Hall Place"
+          data={{ student_number: profile.studentNumber }}
+          prefill={demoPrefill.hallApplication}
+          onClose={() => setDialog(null)}
+          onCustomize={customize && (() => customize('accommodation-application', dialog))}
+          configure={(model) => {
+            const question = model.getQuestionByName('student_number');
+            if (question) question.readOnly = true;
+          }}
+          onSave={async (data) => {
+            const id = String(data.residence_id ?? '');
+            if (!id) throw new Error('Select a hall.');
+            await campusRepository.allocateResidence(id, data);
+            showToast('Hall place saved.');
           }}
         />
       )}

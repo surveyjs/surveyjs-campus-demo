@@ -1,0 +1,43 @@
+{
+  "title": "Hall Application",
+  "pages": [
+    {
+      "name": "application",
+      "elements": [
+        { "type": "text", "name": "student_number", "title": "Student ID", "isRequired": true, "placeholder": "e.g. STU-1150" },
+        {
+          "type": "dropdown",
+          "name": "residence_id",
+          "title": "Hall of residence",
+          "isRequired": true,
+          "choicesByUrl": { "url": "/api/residences", "valueName": "id", "titleName": "label" }
+        },
+        {
+          "type": "dropdown",
+          "name": "room_type",
+          "title": "Room type",
+          "isRequired": true,
+          "choices": ["Single", "Shared", "Ensuite", "Accessible"]
+        },
+        {
+          "type": "dropdown",
+          "name": "contract",
+          "title": "Contract length",
+          "isRequired": true,
+          "choices": ["Full year", "Semester 1", "Semester 2"]
+        },
+        { "type": "comment", "name": "notes", "title": "Accessibility or other notes", "rows": 3 },
+        {
+          "type": "boolean",
+          "name": "terms_confirmation",
+          "displayMode": "switch",
+          "title": "The student accepts the hall licence terms.",
+          "isRequired": true,
+          "validators": [{ "type": "expression", "expression": "{terms_confirmation} = true", "text": "Accept the hall licence terms to continue." }]
+        }
+      ]
+    }
+  ],
+  "completeText": "Request a Hall Place",
+  "headerView": "basic"
+}

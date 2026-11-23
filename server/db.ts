@@ -6,6 +6,7 @@ import {
   ACADEMIC_YEAR,
   DEMO_PASSWORD,
   INITIAL_ADVISING,
+  INITIAL_ALLOCATIONS,
   INITIAL_COURSE_REGISTRATIONS,
   INITIAL_COURSES,
   INITIAL_DEPARTMENTS,
@@ -13,6 +14,7 @@ import {
   INITIAL_EVENTS,
   INITIAL_PREREQUISITES,
   INITIAL_PROGRAMMES,
+  INITIAL_RESIDENCES,
   INITIAL_STUDENTS,
   INITIAL_SUPPORT,
   INITIAL_USERS,
@@ -23,6 +25,7 @@ import { AuthUser, RosterEntry, Session, UserRole } from '../src/types/auth';
 import {
   AdvisingInput,
   AdvisingMeeting,
+  AllocationInput,
   CampusEvent,
   Course,
   CourseInput,
@@ -31,6 +34,8 @@ import {
   EventInput,
   EventRegistrationInput,
   Programme,
+  Residence,
+  ResidenceInput,
   StaffMember,
   Student,
   StudentInput,
@@ -148,6 +153,32 @@ CREATE TABLE IF NOT EXISTS event_registrations (
 );
 CREATE INDEX IF NOT EXISTS idx_event_reg_event ON event_registrations(event_id);
 
+CREATE TABLE IF NOT EXISTS residences (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  category TEXT NOT NULL,
+  description TEXT NOT NULL DEFAULT '',
+  location TEXT NOT NULL,
+  weekly_rate INTEGER NOT NULL,
+  capacity INTEGER NOT NULL,
+  status TEXT NOT NULL DEFAULT 'open',
+  baseline_occupancy INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS accommodation_allocations (
+  id TEXT PRIMARY KEY,
+  student_id TEXT NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+  residence_id TEXT NOT NULL REFERENCES residences(id),
+  room_type TEXT NOT NULL,
+  contract TEXT NOT NULL,
+  notes TEXT NOT NULL DEFAULT '',
+  start_date TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'Allocated',
+  form_version_id TEXT,
+  UNIQUE (student_id)
+);
+CREATE INDEX IF NOT EXISTS idx_allocation_residence ON accommodation_allocations(residence_id);
+
 CREATE TABLE IF NOT EXISTS advising_meetings (
   id TEXT PRIMARY KEY,
   student_id TEXT NOT NULL REFERENCES students(id) ON DELETE CASCADE,
@@ -221,6 +252,9 @@ const ENROLLMENT_TYPES = ['Standard', 'Elective', 'Audit'];
 const SUPPORT_TYPES = ['Academic Support', 'Accessibility Support', 'Financial Support', 'Personal Support', 'Technical Support'];
 const PRIORITIES = ['Low', 'Normal', 'High', 'Urgent'];
 const SUPPORT_STATUSES = ['Open', 'In Progress', 'Resolved', 'Closed'];
+const HALL_CATEGORIES = ['Catered', 'Self-catered', 'Accessible'];
+const ROOM_TYPES = ['Single', 'Shared', 'Ensuite', 'Accessible'];
+const CONTRACTS = ['Full year', 'Semester 1', 'Semester 2'];
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const RESET_TABLES = [
@@ -231,6 +265,8 @@ const RESET_TABLES = [
   'support_requests',
   'advising_meetings',
   'event_registrations',
+  'accommodation_allocations',
+  'residences',
   'course_registrations',
   'course_prerequisites',
   'events',
@@ -270,6 +306,7 @@ function required(value: string, label: string): string {
 }
 
 export interface StudentSearchQuery {
+  name?: string;
   surname?: string;
   dateOfBirth?: string;
   studentNumber?: string;
@@ -428,6 +465,83 @@ export function createDb(dbPath: string) {
     };
   }
 
+  function occupiedCount(residenceId: string, baseline: number): number {
+    const row = db
+      .prepare(`SELECT COUNT(*) AS count FROM accommodation_allocations WHERE residence_id = ? AND status = 'Allocated'`)
+      .get(residenceId) as { count: number };
+    return baseline + row.count;
+  }
+
+  function hallResidents(residenceId: string) {
+    return (
+      db
+        .prepare(
+          `SELECT a.id, a.student_id, s.student_number, s.first_name, s.last_name,
+                  a.room_type, a.contract, a.notes, a.start_date, a.status
+           FROM accommodation_allocations a
+           JOIN students s ON s.id = a.student_id
+           WHERE a.residence_id = ?
+           ORDER BY s.last_name, s.first_name`,
+        )
+        .all(residenceId) as any[]
+    ).map((row) => ({
+      id: row.id,
+      studentId: row.student_id,
+      studentNumber: row.student_number,
+      studentName: `${row.first_name} ${row.last_name}`,
+      roomType: row.room_type,
+      contract: row.contract,
+      notes: row.notes,
+      startDate: row.start_date,
+      status: row.status,
+    }));
+  }
+
+  function placesFor(studentId: string) {
+    return (
+      db
+        .prepare(
+          `SELECT a.id, a.residence_id, r.name, r.category, a.room_type, a.contract, a.notes, a.status, a.start_date
+           FROM accommodation_allocations a
+           JOIN residences r ON r.id = a.residence_id
+           WHERE a.student_id = ?
+           ORDER BY a.start_date`,
+        )
+        .all(studentId) as any[]
+    ).map((row) => ({
+      id: row.id,
+      residenceId: row.residence_id,
+      residenceName: row.name,
+      category: row.category,
+      roomType: row.room_type,
+      contract: row.contract,
+      notes: row.notes,
+      status: row.status,
+      startDate: row.start_date,
+    }));
+  }
+
+  function rowToResidence(row: any, withResidents: boolean): Residence {
+    const occupied = occupiedCount(row.id, row.baseline_occupancy);
+    const occupancyStatus = row.status === 'closed' ? 'Closed' : occupied >= row.capacity ? 'Full' : 'Open';
+    return {
+      id: row.id,
+      name: row.name,
+      label: `${row.name} — ${row.category} (${Math.max(0, row.capacity - occupied)} places)`,
+      category: row.category,
+      description: row.description,
+      location: row.location,
+      weeklyRate: row.weekly_rate,
+      capacity: row.capacity,
+      occupied,
+      availablePlaces: Math.max(0, row.capacity - occupied),
+      status: row.status,
+      occupancyStatus,
+      baselineOccupancy: row.baseline_occupancy,
+      residents: withResidents ? hallResidents(row.id) : [],
+    };
+  }
+
   function supportHistory(requestId: string) {
     return (
       db
@@ -531,6 +645,7 @@ export function createDb(dbPath: string) {
       courses: coursesFor(student.id),
       advising: advisingFor(student.id),
       supportRequests: supportFor(student.id, filter),
+      accommodation: placesFor(student.id),
     };
   }
 
@@ -769,6 +884,41 @@ export function createDb(dbPath: string) {
       );
     }
 
+    const insertResidence = db.prepare(
+      `INSERT INTO residences (
+        id, name, category, description, location, weekly_rate, capacity, status, baseline_occupancy
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    );
+    for (const hall of INITIAL_RESIDENCES) {
+      insertResidence.run(
+        hall.id,
+        hall.name,
+        hall.category,
+        hall.description,
+        hall.location,
+        hall.weeklyRate,
+        hall.capacity,
+        hall.status,
+        hall.baselineOccupancy,
+      );
+    }
+    const insertAllocation = db.prepare(
+      `INSERT INTO accommodation_allocations (
+        id, student_id, residence_id, room_type, contract, notes, start_date, status, form_version_id
+      ) VALUES (?, ?, ?, ?, ?, ?, '2025-09-20', 'Allocated', ?)`,
+    );
+    for (const place of INITIAL_ALLOCATIONS) {
+      insertAllocation.run(
+        place.id,
+        place.studentId,
+        place.residenceId,
+        place.roomType,
+        place.contract,
+        place.notes,
+        versionIds.get('accommodation-application'),
+      );
+    }
+
     const insertAdvising = db.prepare(
       `INSERT INTO advising_meetings (id, student_id, advisor_id, meeting_date, topic, notes, follow_up_date, form_version_id)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -816,19 +966,93 @@ export function createDb(dbPath: string) {
 
   if ((db.prepare('SELECT COUNT(*) AS count FROM users').get() as { count: number }).count === 0) seedAll();
 
+  const backfillForms = db.transaction(() => {
+    const stamp = new Date().toISOString();
+    const findForm = db.prepare('SELECT id FROM form_definitions WHERE id = ?');
+    const insertVersion = db.prepare(
+      `INSERT INTO form_versions (id, form_id, version_number, schema_json, created_by, created_at) VALUES (?, ?, 1, ?, 'system', ?)`,
+    );
+    const insertForm = db.prepare(
+      `INSERT INTO form_definitions (id, name, category, description, active_version_id, status, created_by, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, 'active', 'system', ?, ?)`,
+    );
+    for (const form of FORM_CATALOG) {
+      if (findForm.get(form.id)) continue;
+      const versionId = randomUUID();
+      insertForm.run(form.id, form.name, form.category, form.description, versionId, stamp, stamp);
+      insertVersion.run(versionId, form.id, JSON.stringify(form.schema), stamp);
+    }
+  });
+  backfillForms();
+
+  const widenStudentSearch = db.transaction(() => {
+    const row = db
+      .prepare(
+        `SELECT v.id, v.version_number, v.schema_json
+         FROM form_definitions d
+         JOIN form_versions v ON v.id = d.active_version_id
+         WHERE d.id = 'student-search'`,
+      )
+      .get() as { id: string; version_number: number; schema_json: string } | undefined;
+    if (!row) return;
+    const schema = JSON.parse(row.schema_json) as {
+      pages?: { elements?: { name?: string; title?: string; placeholder?: string }[] }[];
+    };
+    const question = schema.pages?.flatMap((page) => page.elements ?? []).find((element) => element.name === 'surname');
+    if (!question || question.title !== 'Surname') return;
+    question.name = 'name';
+    question.title = 'Name';
+    question.placeholder = 'e.g. Emma Thompson';
+    const versionId = randomUUID();
+    const stamp = new Date().toISOString();
+    db.prepare(
+      `INSERT INTO form_versions (id, form_id, version_number, schema_json, created_by, created_at) VALUES (?, 'student-search', ?, ?, 'system', ?)`,
+    ).run(versionId, row.version_number + 1, JSON.stringify(schema), stamp);
+    db.prepare(
+      `UPDATE form_definitions SET active_version_id = ?, description = ?, updated_at = ? WHERE id = 'student-search'`,
+    ).run(versionId, 'Search students by name, date of birth, or student ID.', stamp);
+  });
+  widenStudentSearch();
+
+  if ((db.prepare('SELECT COUNT(*) AS count FROM residences').get() as { count: number }).count === 0) {
+    const version = db.prepare(`SELECT id FROM form_versions WHERE form_id = 'accommodation-application' ORDER BY version_number DESC LIMIT 1`).get() as
+      | { id: string }
+      | undefined;
+    const insertResidence = db.prepare(
+      `INSERT INTO residences (
+        id, name, category, description, location, weekly_rate, capacity, status, baseline_occupancy
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    );
+    const insertAllocation = db.prepare(
+      `INSERT INTO accommodation_allocations (
+        id, student_id, residence_id, room_type, contract, notes, start_date, status, form_version_id
+      ) VALUES (?, ?, ?, ?, ?, ?, '2025-09-20', 'Allocated', ?)`,
+    );
+    const fill = db.transaction(() => {
+      for (const hall of INITIAL_RESIDENCES) {
+        insertResidence.run(hall.id, hall.name, hall.category, hall.description, hall.location, hall.weeklyRate, hall.capacity, hall.status, hall.baselineOccupancy);
+      }
+      for (const place of INITIAL_ALLOCATIONS) {
+        insertAllocation.run(place.id, place.studentId, place.residenceId, place.roomType, place.contract, place.notes, version?.id ?? null);
+      }
+    });
+    fill();
+  }
+
   function searchStudents(query: StudentSearchQuery, viewer: AuthUser): Student[] {
-    const surname = query.surname?.trim() ?? '';
+    const name = (query.name || query.surname || '').trim().replace(/\s+/g, ' ');
     const dateOfBirth = query.dateOfBirth?.trim() ?? '';
     const studentNumber = query.studentNumber?.trim() ?? '';
     const rows = db
       .prepare(
         `${studentSelect}
-         WHERE (? = '' OR s.last_name LIKE '%' || ? || '%' COLLATE NOCASE)
+         WHERE (? = '' OR (s.first_name || ' ' || s.last_name) LIKE '%' || ? || '%' COLLATE NOCASE
+                        OR (s.last_name || ' ' || s.first_name) LIKE '%' || ? || '%' COLLATE NOCASE)
            AND (? = '' OR s.date_of_birth = ?)
            AND (? = '' OR s.student_number LIKE '%' || ? || '%' COLLATE NOCASE)
          ORDER BY s.last_name, s.first_name`,
       )
-      .all(surname, surname, dateOfBirth, dateOfBirth, studentNumber, studentNumber) as any[];
+      .all(name, name, name, dateOfBirth, dateOfBirth, studentNumber, studentNumber) as any[];
     const students = rows.map(rowToStudent);
     if (viewer.role === 'student') return students.filter((student) => student.id === viewer.studentId);
     return students;
@@ -1036,6 +1260,62 @@ export function createDb(dbPath: string) {
     ).run(randomUUID(), student.id, event.id, required(input.areaOfInterest, 'Area of interest'), input.notes?.trim() ?? '', nowIso(), versionId);
     storeResponse('event-registration', versionId, actor.id, response);
     return rowToEvent(db.prepare('SELECT * FROM events WHERE id = ?').get(event.id), true);
+  });
+
+  const saveResidence = db.transaction((input: ResidenceInput, actor: AuthUser, formVersionId: string | undefined, response: unknown, existingId?: string) => {
+    const name = required(input.name, 'Hall name');
+    const category = required(input.category, 'Hall type');
+    const location = required(input.location, 'Location');
+    if (!HALL_CATEGORIES.includes(category)) fail('Hall type is not valid.');
+    if (!Number.isInteger(input.capacity) || input.capacity < 1) fail('Capacity must be at least 1.');
+    if (!Number.isInteger(input.weeklyRate) || input.weeklyRate < 0) fail('Weekly rate must be zero or more.');
+    const status = input.status === 'closed' ? 'closed' : input.status === 'open' ? 'open' : '';
+    if (!status) fail('Hall status is not valid.');
+    const id = existingId ?? randomUUID();
+    if (existingId) {
+      const current = db.prepare('SELECT id, baseline_occupancy FROM residences WHERE id = ?').get(existingId) as
+        | { id: string; baseline_occupancy: number }
+        | undefined;
+      if (!current) fail('Hall not found.', 404);
+      const occupied = occupiedCount(existingId, current.baseline_occupancy);
+      if (input.capacity < occupied) fail('Capacity cannot be lower than the number of residents.', 409);
+      db.prepare(
+        `UPDATE residences SET name = ?, category = ?, description = ?, location = ?, weekly_rate = ?, capacity = ?, status = ? WHERE id = ?`,
+      ).run(name, category, input.description?.trim() ?? '', location, input.weeklyRate, input.capacity, status, id);
+    } else {
+      db.prepare(
+        `INSERT INTO residences (id, name, category, description, location, weekly_rate, capacity, status, baseline_occupancy)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)`,
+      ).run(id, name, category, input.description?.trim() ?? '', location, input.weeklyRate, input.capacity, status);
+    }
+    storeResponse('accommodation-admin', versionFor('accommodation-admin', formVersionId), actor.id, response);
+    return rowToResidence(db.prepare('SELECT * FROM residences WHERE id = ?').get(id), true);
+  });
+
+  const allocateResidence = db.transaction((residenceId: string, input: AllocationInput, actor: AuthUser, formVersionId: string | undefined, response: unknown) => {
+    const hall = db.prepare('SELECT * FROM residences WHERE id = ?').get(residenceId) as any;
+    if (!hall) fail('Hall not found.', 404);
+    if (input.residenceId && input.residenceId !== residenceId) fail('The selected hall does not match this request.');
+    if (hall.status !== 'open') fail('This hall is not open for new places.', 409);
+    if (!input.termsConfirmation) fail('Accept the hall licence terms to continue.');
+    const roomType = required(input.roomType, 'Room type');
+    const contract = required(input.contract, 'Contract length');
+    if (!ROOM_TYPES.includes(roomType)) fail('Room type is not valid.');
+    if (!CONTRACTS.includes(contract)) fail('Contract length is not valid.');
+    const student = requireStudentByNumber(required(input.studentNumber, 'Student ID'));
+    if (actor.role === 'student' && actor.studentId !== student.id) fail('You can only request a hall place for yourself.', 403);
+    const occupied = occupiedCount(hall.id, hall.baseline_occupancy);
+    if (occupied >= hall.capacity) fail('This hall is full.', 409);
+    const existing = db.prepare(`SELECT id FROM accommodation_allocations WHERE student_id = ? AND status = 'Allocated'`).get(student.id);
+    if (existing) fail('This student already has a hall place.', 409);
+    const versionId = versionFor('accommodation-application', formVersionId);
+    db.prepare(
+      `INSERT INTO accommodation_allocations (
+        id, student_id, residence_id, room_type, contract, notes, start_date, status, form_version_id
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, 'Allocated', ?)`,
+    ).run(randomUUID(), student.id, hall.id, roomType, contract, input.notes?.trim() ?? '', today(), versionId);
+    storeResponse('accommodation-application', versionId, actor.id, response);
+    return rowToResidence(db.prepare('SELECT * FROM residences WHERE id = ?').get(hall.id), true);
   });
 
   const saveAdvising = db.transaction(
@@ -1252,6 +1532,17 @@ export function createDb(dbPath: string) {
     updateEvent: (id: string, input: EventInput, actor: AuthUser, formVersionId: string | undefined, response: unknown) =>
       saveEvent(input, actor, formVersionId, response, id),
     registerForEvent,
+    residences: () => (db.prepare('SELECT * FROM residences ORDER BY name').all() as any[]).map((row) => rowToResidence(row, false)),
+    residence: (id: string) => {
+      const row = db.prepare('SELECT * FROM residences WHERE id = ?').get(id);
+      if (!row) fail('Hall not found.', 404);
+      return rowToResidence(row, true);
+    },
+    createResidence: (input: ResidenceInput, actor: AuthUser, formVersionId: string | undefined, response: unknown) =>
+      saveResidence(input, actor, formVersionId, response),
+    updateResidence: (id: string, input: ResidenceInput, actor: AuthUser, formVersionId: string | undefined, response: unknown) =>
+      saveResidence(input, actor, formVersionId, response, id),
+    allocateResidence,
     advising: advisingFor,
     saveAdvising,
     supportRequests: supportFor,
