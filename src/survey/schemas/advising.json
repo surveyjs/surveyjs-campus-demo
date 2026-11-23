@@ -1,0 +1,25 @@
+{
+  "title": "Academic Advising",
+  "pages": [
+    {
+      "name": "meeting",
+      "elements": [
+        { "type": "text", "name": "meeting_date", "title": "Meeting date", "inputType": "date", "isRequired": true },
+        {
+          "type": "dropdown",
+          "name": "advisor_id",
+          "startWithNewLine": false,
+          "title": "Assigned advisor",
+          "isRequired": true,
+          "placeholder": "Select an advisor",
+          "choicesByUrl": { "url": "/api/advisors", "valueName": "id", "titleName": "fullName" }
+        },
+        { "type": "text", "name": "topic", "title": "Topic", "isRequired": true },
+        { "type": "comment", "name": "notes", "title": "Meeting notes", "isRequired": true, "rows": 4 },
+        { "type": "text", "name": "follow_up_date", "title": "Follow-up date", "inputType": "date" }
+      ]
+    }
+  ],
+  "completeText": "Save Meeting",
+  "headerView": "basic"
+}

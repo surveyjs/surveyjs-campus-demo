@@ -1,0 +1,33 @@
+{
+  "title": "Event Details",
+  "pages": [
+    {
+      "name": "event",
+      "elements": [
+        { "type": "text", "name": "name", "title": "Event name", "isRequired": true },
+        {
+          "type": "dropdown",
+          "name": "category",
+          "title": "Category",
+          "isRequired": true,
+          "choices": ["Career & Employability", "Student Experience", "Academic", "Wellbeing"]
+        },
+        { "type": "comment", "name": "description", "title": "Description", "rows": 3 },
+        { "type": "text", "name": "event_date", "title": "Date and time", "inputType": "datetime-local", "isRequired": true },
+        { "type": "text", "name": "location", "startWithNewLine": false, "title": "Location", "isRequired": true },
+        { "type": "text", "name": "capacity", "title": "Maximum capacity", "inputType": "number", "min": 1, "isRequired": true },
+        {
+          "type": "dropdown",
+          "name": "status",
+          "startWithNewLine": false,
+          "title": "Status",
+          "isRequired": true,
+          "choices": ["Open", "Cancelled"],
+          "defaultValue": "Open"
+        }
+      ]
+    }
+  ],
+  "completeText": "Save Event",
+  "headerView": "basic"
+}

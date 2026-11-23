@@ -1,0 +1,21 @@
+{
+  "title": "Event Registration",
+  "pages": [
+    {
+      "name": "registration",
+      "elements": [
+        { "type": "text", "name": "student_number", "title": "Student ID", "isRequired": true, "placeholder": "e.g. STU-1108" },
+        {
+          "type": "dropdown",
+          "name": "area_of_interest",
+          "title": "Area of interest",
+          "isRequired": true,
+          "choices": ["Careers", "Academic departments", "Student societies", "Volunteering", "Other"]
+        },
+        { "type": "comment", "name": "notes", "title": "Notes", "rows": 3 }
+      ]
+    }
+  ],
+  "completeText": "Register for Event",
+  "headerView": "basic"
+}

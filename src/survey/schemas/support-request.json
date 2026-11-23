@@ -1,0 +1,30 @@
+{
+  "title": "Student Support Request",
+  "pages": [
+    {
+      "name": "request",
+      "elements": [
+        {
+          "type": "dropdown",
+          "name": "request_type",
+          "title": "Request type",
+          "isRequired": true,
+          "choices": ["Academic Support", "Accessibility Support", "Financial Support", "Personal Support", "Technical Support"]
+        },
+        {
+          "type": "dropdown",
+          "name": "priority",
+          "startWithNewLine": false,
+          "title": "Priority",
+          "isRequired": true,
+          "choices": ["Low", "Normal", "High", "Urgent"],
+          "defaultValue": "Normal"
+        },
+        { "type": "comment", "name": "description", "title": "Request description", "isRequired": true, "rows": 4 },
+        { "type": "comment", "name": "supporting_information", "title": "Supporting information", "rows": 3 }
+      ]
+    }
+  ],
+  "completeText": "Submit Request",
+  "headerView": "basic"
+}

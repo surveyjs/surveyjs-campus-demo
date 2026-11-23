@@ -1,0 +1,50 @@
+{
+  "title": "Edit Student",
+  "pages": [
+    {
+      "name": "edit",
+      "elements": [
+        { "type": "text", "name": "first_name", "title": "First name", "isRequired": true },
+        { "type": "text", "name": "last_name", "startWithNewLine": false, "title": "Last name", "isRequired": true },
+        { "type": "text", "name": "date_of_birth", "title": "Date of birth", "inputType": "date", "isRequired": true },
+        { "type": "text", "name": "student_number", "startWithNewLine": false, "title": "Student ID", "isRequired": true },
+        {
+          "type": "dropdown",
+          "name": "programme_id",
+          "title": "Programme",
+          "isRequired": true,
+          "choicesByUrl": { "url": "/api/programmes", "valueName": "id", "titleName": "name" }
+        },
+        {
+          "type": "dropdown",
+          "name": "department_id",
+          "startWithNewLine": false,
+          "title": "Department",
+          "isRequired": true,
+          "choicesByUrl": { "url": "/api/departments", "valueName": "id", "titleName": "name" }
+        },
+        { "type": "text", "name": "academic_year", "title": "Academic year", "isRequired": true },
+        {
+          "type": "dropdown",
+          "name": "status",
+          "startWithNewLine": false,
+          "title": "Enrollment status",
+          "isRequired": true,
+          "choices": ["Enrolled", "On Leave", "Graduated", "Withdrawn"]
+        },
+        {
+          "type": "text",
+          "name": "email",
+          "title": "Email",
+          "inputType": "email",
+          "isRequired": true,
+          "validators": [{ "type": "email" }]
+        },
+        { "type": "text", "name": "phone", "startWithNewLine": false, "title": "Phone" },
+        { "type": "comment", "name": "address", "title": "Address", "rows": 3 }
+      ]
+    }
+  ],
+  "completeText": "Save Student",
+  "headerView": "basic"
+}

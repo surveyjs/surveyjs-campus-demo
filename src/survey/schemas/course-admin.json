@@ -1,0 +1,48 @@
+{
+  "title": "Course Details",
+  "pages": [
+    {
+      "name": "course",
+      "elements": [
+        { "type": "text", "name": "course_code", "title": "Course code", "isRequired": true },
+        { "type": "text", "name": "name", "startWithNewLine": false, "title": "Course name", "isRequired": true },
+        {
+          "type": "dropdown",
+          "name": "department_id",
+          "title": "Department",
+          "isRequired": true,
+          "choicesByUrl": { "url": "/api/departments", "valueName": "id", "titleName": "name" }
+        },
+        {
+          "type": "dropdown",
+          "name": "semester",
+          "startWithNewLine": false,
+          "title": "Semester",
+          "isRequired": true,
+          "choices": ["Semester 1", "Semester 2"]
+        },
+        { "type": "text", "name": "credits", "title": "Credits", "inputType": "number", "min": 0, "isRequired": true },
+        { "type": "text", "name": "capacity", "startWithNewLine": false, "title": "Capacity", "inputType": "number", "min": 1, "isRequired": true },
+        { "type": "text", "name": "instructor", "title": "Instructor", "isRequired": true },
+        {
+          "type": "dropdown",
+          "name": "status",
+          "startWithNewLine": false,
+          "title": "Status",
+          "isRequired": true,
+          "choices": ["Active", "Inactive"],
+          "defaultValue": "Active"
+        },
+        { "type": "comment", "name": "description", "title": "Description", "rows": 3 },
+        {
+          "type": "tagbox",
+          "name": "prerequisites",
+          "title": "Prerequisites",
+          "choicesByUrl": { "url": "/api/courses", "valueName": "courseCode", "titleName": "label" }
+        }
+      ]
+    }
+  ],
+  "completeText": "Save Course",
+  "headerView": "basic"
+}

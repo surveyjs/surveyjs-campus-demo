@@ -1,0 +1,26 @@
+{
+  "title": "Update Support Request",
+  "pages": [
+    {
+      "name": "status",
+      "elements": [
+        {
+          "type": "dropdown",
+          "name": "status",
+          "title": "Status",
+          "isRequired": true,
+          "choices": ["Open", "In Progress", "Resolved", "Closed"]
+        },
+        {
+          "type": "dropdown",
+          "name": "assigned_to",
+          "title": "Assigned staff member",
+          "isRequired": true,
+          "choicesByUrl": { "url": "/api/staff", "valueName": "id", "titleName": "fullName" }
+        }
+      ]
+    }
+  ],
+  "completeText": "Update Request",
+  "headerView": "basic"
+}

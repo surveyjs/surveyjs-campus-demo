@@ -1,0 +1,267 @@
+@import "tailwindcss";
+
+/* Campus design tokens. Semantic names follow the contract in
+   src/survey/tailwind-adapter.css, so SurveyJS forms pick up the same palette. */
+@theme static {
+  --font-sans: "Open Sans", sans-serif;
+  --text-xs--line-height: 1.6;
+  --text-sm--line-height: 1.6;
+  --radius-card: 10px;
+
+  --color-background: #f4f6f9;
+  --color-foreground: #1b2838;
+  --color-muted-foreground: #5c6b7a;
+  --color-subtle-foreground: #7d8b99;
+  --color-card: #fff;
+  --color-card-subtle: #f7f9fb;
+  --color-card-hover: #f8fafc;
+  --color-muted: #e8eef3;
+  --color-border: #d5dee7;
+  --color-border-subtle: #e6edf3;
+  --color-border-hover: #8aadc8;
+  --color-input: #c5d3e0;
+  --color-primary: #1f4e79;
+  --color-primary-hover: #163a5c;
+  --color-primary-foreground: #fff;
+  --color-primary-soft: #e7f0f8;
+  --color-primary-border: #c9dced;
+  --color-accent: #eef4f9;
+  --color-tag: #dceaf5;
+  --color-focus: #7aa3c7;
+  --color-danger: #a64c45;
+  --color-danger-border: #e3bdb7;
+  --color-highlight: #1f6f8b;
+
+  --shadow-menu: 0 8px 24px #16324a20;
+  --shadow-dialog: 0 20px 70px #16324a25;
+  --shadow-dock: 0 8px 28px #16324a24;
+}
+
+:root {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-background: #121a24;
+  --color-foreground: #e6eef6;
+  --color-muted-foreground: #a9b9c9;
+  --color-subtle-foreground: #a9b9c9;
+  --color-card: #1b2836;
+  --color-card-subtle: #223244;
+  --color-card-hover: #283b50;
+  --color-muted: #314356;
+  --color-border: #3d5368;
+  --color-border-subtle: #33485c;
+  --color-border-hover: #6d8eae;
+  --color-input: #4d6882;
+  --color-primary: #8ec0ea;
+  --color-primary-hover: #b7d7f4;
+  --color-primary-foreground: #102033;
+  --color-primary-soft: #24384c;
+  --color-primary-border: #3a5670;
+  --color-accent: #243447;
+  --color-tag: #2a4258;
+  --color-focus: #8ec0ea;
+  --color-danger: #f0aaa5;
+  --color-danger-border: #965b58;
+  --color-highlight: #8ec0ea;
+  --shadow-dock: 0 8px 32px #0007;
+}
+
+@layer base {
+  html {
+    scrollbar-gutter: stable;
+    scroll-padding-bottom: 104px;
+  }
+  html:has(dialog[open]) {
+    overflow: hidden;
+  }
+  button:not(:disabled),
+  summary {
+    cursor: pointer;
+  }
+  :is(button, a, input, summary):focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 3px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+}
+
+/* SurveyJS retuning on top of the adapter: the campus forms keep SurveyJS's
+   roomier 44px controls and nested panels instead of the adapter's compact
+   Tailwind density, plus slots the adapter contract does not cover. */
+.sd-root-modern.sjs-theme-overrides {
+  --sjs2-typography-line-height-default: 22px;
+  --sjs2-typography-font-size-component-input-content: 15px;
+  --sjs2-typography-font-size-component-question-title: 14px;
+  --sjs2-typography-font-size-component-question-description: 14px;
+  --sjs2-typography-line-height-component-question-description: 22px;
+  --sjs2-typography-font-size-component-panel-title: 14px;
+  --sjs2-typography-line-height-component-panel-title: 22px;
+  --sjs2-typography-font-weight-component-panel-title: 600;
+  --sjs2-typography-font-size-component-survey-header-title: 18px;
+  --sjs2-typography-line-height-component-survey-header-title: 26px;
+  --sjs2-radius-component-panel: var(--sjs2-radius-x150);
+  --sjs2-radius-component-drop: var(--sjs2-radius-x200);
+  --sjs2-layout-component-survey-box-padding-top: 24px;
+  --sjs2-layout-component-survey-header-gap-vertical: 6px;
+  --sjs2-layout-component-page-box-gap-vertical: var(--sjs2-spacing-large-vertical);
+  --sjs2-layout-component-page-content-area-gap-vertical: 24px;
+  --sjs2-layout-component-page-content-area-gap-horizontal: 24px;
+  --sjs2-layout-component-survey-footer-padding-top: 0px;
+  --sjs2-layout-component-survey-footer-padding-bottom: 0px;
+  --sjs2-layout-component-survey-footer-action-group-gap: 12px;
+  --sjs2-layout-component-question-header-padding-bottom: 0px;
+  --sjs2-layout-component-question-header-gap-vertical: var(--sjs2-spacing-x050);
+  --sjs2-layout-component-question-box-gap-vertical: 8px;
+  --sjs2-layout-component-formbox-medium-padding-vertical: var(--sjs2-spacing-x050);
+  --sjs2-layout-component-formbox-medium-padding-horizontal: var(--sjs2-spacing-x050);
+  --sjs2-layout-component-input-medium-content-padding-vertical: 7px;
+  --sjs2-layout-component-input-medium-content-padding-horizontal: 10px;
+  --sjs2-layout-component-panel-box-gap-vertical: var(--sjs2-spacing-x000);
+  --sjs2-layout-component-panel-header-padding-top: var(--sjs2-spacing-medium-vertical);
+  --sjs2-layout-component-panel-header-padding-bottom: var(--sjs2-spacing-medium-vertical);
+  --sjs2-layout-component-panel-header-padding-left: var(--sjs2-spacing-large-horizontal);
+  --sjs2-layout-component-panel-header-padding-right: var(--sjs2-spacing-large-horizontal);
+  --sjs2-layout-component-panel-content-area-padding-top: var(--sjs2-spacing-medium-vertical);
+  --sjs2-layout-component-panel-content-area-padding-bottom: var(--sjs2-spacing-medium-vertical);
+  --sjs2-layout-component-panel-content-area-padding-horizontal: var(--sjs2-spacing-large-horizontal);
+  --sjs2-layout-component-panel-content-area-gap-vertical: var(--sjs2-spacing-medium-vertical);
+  --sjs2-layout-component-panel-content-area-gap-horizontal: var(--sjs2-spacing-large-horizontal);
+  --sjs2-layout-component-action-medium-box-padding-vertical: 10px;
+  --sjs2-layout-component-action-medium-box-padding-horizontal: 16px;
+  --sjs2-layout-component-action-medium-label-padding-horizontal: 0px;
+  --sjs2-layout-component-action-large-box-gap: 8px;
+  --sjs2-layout-component-action-large-box-padding-vertical: 11px;
+  --sjs2-layout-component-action-large-box-padding-horizontal: 16px;
+  --sjs2-layout-component-action-large-label-padding-horizontal: 0px;
+  --sjs2-layout-component-action-large-icon-padding-vertical: 0px;
+  --sjs2-layout-component-action-large-icon-padding-horizontal: 0px;
+  --sjs2-color-utility-surface-survey: var(--color-card);
+  --sjs2-color-bg-brand-primary-dim: var(--color-primary-hover);
+  --sjs2-color-bg-brand-secondary: var(--color-primary-soft);
+  --sjs2-color-bg-basic-tertiary: var(--color-background);
+  --sjs2-color-bg-basic-primary-dim: var(--color-muted);
+  --sjs2-color-bg-basic-secondary-dim: var(--color-muted);
+  --sjs2-border-effect-floating-default: 0 0 0 1px var(--color-border), var(--shadow-menu);
+  --sjs2-color-component-action-brand-tertiary-surface-default-bg: var(--color-card);
+  --sjs2-color-component-action-brand-tertiary-surface-hovered-bg: var(--color-accent);
+  --sjs2-color-component-action-brand-tertiary-surface-default-label: var(--color-primary);
+  --sjs2-color-component-action-brand-tertiary-surface-hovered-label: var(--color-primary);
+  --sjs2-color-component-action-brand-tertiary-surface-default-icon: var(--color-primary);
+  --sjs2-color-component-action-brand-tertiary-surface-hovered-icon: var(--color-primary);
+  --sjs2-border-effect-component-action-brand-tertiary-surface-default: 0 0 0 1px var(--color-input);
+  --sjs2-border-effect-component-action-brand-tertiary-surface-hovered: 0 0 0 1px var(--color-border-hover);
+}
+
+/* Host layouts around SurveyJS internals: a divided header, footer actions
+   pushed right, and filter forms laid out as a single row with their button. */
+.native-survey .sd-container-modern__title {
+  box-shadow: 0 1px 0 var(--color-border);
+  @variant max-md {
+    padding: var(--campus-form-inset);
+  }
+}
+.native-survey .campus-edit-form {
+  @variant md {
+    margin-left: auto;
+  }
+}
+.native-survey .sd-paneldynamic .sd-panel > .sd-panel__header {
+  padding-block: var(--sjs2-layout-component-panel-header-padding-top)
+    var(--sjs2-layout-component-panel-header-padding-bottom);
+}
+.native-survey .sd-root-modern--mobile .sd-body__navigation .sd-action {
+  padding: var(--sjs2-layout-component-action-large-box-padding-vertical)
+    var(--sjs2-layout-component-action-large-box-padding-horizontal);
+}
+#survey-search .sd-container-modern {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  @variant md {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  & > .sd-container-modern__title {
+    box-shadow: none;
+    min-width: 0;
+  }
+  & > .sv-components-row {
+    grid-column: 1 / -1;
+    border-top: 1px solid var(--color-border);
+  }
+}
+#survey-search .search-header-actions {
+  align-self: center;
+  justify-content: flex-start;
+  padding: 0 var(--campus-form-inset) var(--campus-form-inset);
+  overflow: visible;
+  @variant md {
+    padding: var(--campus-form-inset);
+  }
+}
+:is(#survey-search, #medication-filters) .sd-body {
+  display: grid;
+  align-items: end;
+  gap: 20px;
+  padding-inline: var(--campus-form-inset);
+  @variant lg {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
+:is(#survey-search, #medication-filters) .sd-footer {
+  @variant max-lg {
+    justify-content: flex-start;
+  }
+}
+#survey-search .sd-footer .campus-clear {
+  margin: 0;
+  flex: 0 0 auto;
+  width: auto;
+}
+
+/* Demo dock "SurveyJS blocks": outlines every element SurveyJS renders. */
+[data-survey-component] {
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--radius-card);
+}
+:root[data-survey-outlines="true"] [data-survey-component] {
+  --glow: color-mix(in srgb, var(--color-highlight) 18%, transparent);
+  box-shadow: 0 0 0 4px var(--glow), 0 0 24px var(--glow);
+  animation: survey-component-glow 3.2s ease-in-out infinite;
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    border: 2px dashed var(--color-highlight);
+    border-radius: inherit;
+    pointer-events: none;
+  }
+  &::after {
+    content: attr(data-survey-component);
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 7;
+    padding: 4px 8px;
+    border-radius: 0 var(--radius-card) 0 8px;
+    background: var(--color-primary);
+    color: var(--color-primary-foreground);
+    font: 600 10px/15px var(--font-sans);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    pointer-events: none;
+  }
+}
+@keyframes survey-component-glow {
+  50% {
+    box-shadow: 0 0 0 8px color-mix(in srgb, var(--color-highlight) 5%, transparent), 0 0 30px var(--glow);
+  }
+}

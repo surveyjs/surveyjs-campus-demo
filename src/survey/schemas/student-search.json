@@ -1,0 +1,43 @@
+{
+  "title": "Search for a Student",
+  "description": "Results update as you type. Leave every field blank to list the directory.",
+  "textUpdateMode": "onTyping",
+  "pages": [
+    {
+      "name": "search",
+      "elements": [
+        {
+          "type": "text",
+          "name": "surname",
+          "title": "Surname",
+          "placeholder": "e.g. Thompson",
+          "width": "33.333%",
+          "minWidth": "200px",
+          "autocomplete": "off"
+        },
+        {
+          "type": "text",
+          "name": "date_of_birth",
+          "startWithNewLine": false,
+          "title": "Date of birth",
+          "inputType": "date",
+          "width": "33.333%",
+          "minWidth": "200px"
+        },
+        {
+          "type": "text",
+          "name": "student_number",
+          "startWithNewLine": false,
+          "title": "Student ID",
+          "placeholder": "e.g. STU-1002",
+          "width": "33.333%",
+          "minWidth": "200px",
+          "autocomplete": "off"
+        }
+      ]
+    }
+  ],
+  "checkErrorsMode": "onComplete",
+  "completeText": "Search",
+  "headerView": "basic"
+}

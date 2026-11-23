@@ -1,0 +1,43 @@
+{
+  "title": "Course Registration",
+  "description": "Register an existing student for a course.",
+  "pages": [
+    {
+      "name": "registration",
+      "elements": [
+        { "type": "text", "name": "student_number", "title": "Student ID", "isRequired": true, "placeholder": "e.g. STU-1002" },
+        {
+          "type": "dropdown",
+          "name": "course_code",
+          "title": "Course",
+          "isRequired": true,
+          "placeholder": "Select a course",
+          "choicesByUrl": { "url": "/api/courses", "valueName": "courseCode", "titleName": "label" }
+        },
+        {
+          "type": "dropdown",
+          "name": "enrollment_type",
+          "title": "Enrollment type",
+          "isRequired": true,
+          "choices": ["Standard", "Elective", "Audit"]
+        },
+        { "type": "comment", "name": "notes", "title": "Reason / notes", "rows": 3 },
+        {
+          "type": "boolean",
+          "name": "prerequisite_confirmation",
+          "title": "The student meets the course prerequisites",
+          "isRequired": true,
+          "validators": [
+            {
+              "type": "expression",
+              "expression": "{prerequisite_confirmation} = true",
+              "text": "Confirm the prerequisites before registering."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "completeText": "Register for Course",
+  "headerView": "basic"
+}

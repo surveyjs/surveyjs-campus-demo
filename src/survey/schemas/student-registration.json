@@ -1,0 +1,45 @@
+{
+  "title": "Register a Student",
+  "description": "Create a student record. The student ID must be unique.",
+  "pages": [
+    {
+      "name": "registration",
+      "elements": [
+        { "type": "text", "name": "first_name", "title": "First name", "isRequired": true, "autocomplete": "given-name" },
+        { "type": "text", "name": "last_name", "startWithNewLine": false, "title": "Last name", "isRequired": true, "autocomplete": "family-name" },
+        { "type": "text", "name": "date_of_birth", "title": "Date of birth", "inputType": "date", "isRequired": true },
+        { "type": "text", "name": "student_number", "startWithNewLine": false, "title": "Student ID", "isRequired": true, "placeholder": "e.g. STU-2001" },
+        {
+          "type": "dropdown",
+          "name": "programme_id",
+          "title": "Programme",
+          "isRequired": true,
+          "placeholder": "Select a programme",
+          "choicesByUrl": { "url": "/api/programmes", "valueName": "id", "titleName": "name" }
+        },
+        {
+          "type": "dropdown",
+          "name": "department_id",
+          "startWithNewLine": false,
+          "title": "Department",
+          "isRequired": true,
+          "placeholder": "Select a department",
+          "choicesByUrl": { "url": "/api/departments", "valueName": "id", "titleName": "name" }
+        },
+        {
+          "type": "text",
+          "name": "email",
+          "title": "Email",
+          "inputType": "email",
+          "isRequired": true,
+          "validators": [{ "type": "email" }],
+          "autocomplete": "email"
+        },
+        { "type": "text", "name": "phone", "startWithNewLine": false, "title": "Phone", "autocomplete": "tel" },
+        { "type": "comment", "name": "address", "title": "Address", "rows": 3 }
+      ]
+    }
+  ],
+  "completeText": "Register Student",
+  "headerView": "basic"
+}
