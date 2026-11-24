@@ -65,7 +65,7 @@ export const AccommodationPage: React.FC<AccommodationPageProps> = ({ user, onOp
   if (residenceId && !loading && error && !residence) {
     return (
       <section className={emptyPanelClass}>
-        <h2 className="text-base font-semibold">Hall not found</h2>
+        <h2 className="text-base font-medium">Hall not found</h2>
         <p className="mt-2 text-sm text-muted-foreground">{error}</p>
       </section>
     );
@@ -93,14 +93,14 @@ export const AccommodationPage: React.FC<AccommodationPageProps> = ({ user, onOp
             <PanelHeading title="Hall Details" icon="home">
               <Pill>{residence.occupancyStatus}</Pill>
             </PanelHeading>
-            <div className="grid gap-4 px-5 py-5 text-sm md:grid-cols-2 md:px-6">
+            <div className="grid gap-4 px-4 py-4 text-sm md:grid-cols-2">
               <p><span className="text-muted-foreground">Location · </span>{residence.location}</p>
               <p><span className="text-muted-foreground">Weekly rate · </span>£{residence.weeklyRate}</p>
               <p><span className="text-muted-foreground">Capacity · </span>{residence.capacity}</p>
               <p><span className="text-muted-foreground">Occupied · </span>{residence.occupied}</p>
               <p className="md:col-span-2">{residence.description}</p>
               {residence.baselineOccupancy > 0 && (
-                <p className="text-xs text-muted-foreground md:col-span-2">
+                <p className="text-sm text-muted-foreground md:col-span-2">
                   {residence.baselineOccupancy} earlier residents are included in the count and are not listed by name.
                 </p>
               )}
@@ -108,16 +108,16 @@ export const AccommodationPage: React.FC<AccommodationPageProps> = ({ user, onOp
           </section>
           <section className={panelClass}>
             <PanelHeading title="Named Residents" icon="users" />
-            <div className="px-5 py-5 md:px-6">
+            <div className="px-4 py-4">
               {residence.residents.length ? (
                 <ul className="flex flex-col gap-3">
                   {residence.residents.map((person) => (
-                    <li key={person.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border px-4 py-3">
+                    <li key={person.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border px-3 py-2">
                       <div>
-                        <Link to={`/students/${person.studentId}`} className="font-semibold text-primary">
+                        <Link to={`/students/${person.studentId}`} className="font-medium text-foreground hover:underline">
                           {person.studentName}
                         </Link>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-sm text-muted-foreground">
                           {person.studentNumber} · {person.roomType} · {person.contract}
                         </p>
                       </div>
@@ -145,24 +145,24 @@ export const AccommodationPage: React.FC<AccommodationPageProps> = ({ user, onOp
               ) : undefined
             }
           />
-          {error && <p className="mb-4 text-danger">{error}</p>}
+          {error && <p className="mb-4 rounded-lg bg-danger/10 px-2.5 py-2 text-sm text-danger">{error}</p>}
           {loading ? (
             <p className="text-muted-foreground">Loading halls…</p>
           ) : (
             <div className="grid gap-4 md:grid-cols-2">
               {residences.map((item) => (
-                <Link key={item.id} to={`/accommodation/${item.id}`} className={`${panelClass} block px-5 py-5 hover:bg-card-hover md:px-6`}>
+                <Link key={item.id} to={`/accommodation/${item.id}`} className={`${panelClass} block px-4 py-4 hover:bg-muted`}>
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-xs font-semibold text-primary">{item.category}</p>
-                      <h2 className="mt-1 text-base font-semibold">{item.name}</h2>
+                      <p className="text-sm font-medium text-muted-foreground">{item.category}</p>
+                      <h2 className="mt-1 text-base leading-snug font-medium">{item.name}</h2>
                     </div>
                     <Pill>{item.occupancyStatus}</Pill>
                   </div>
-                  <p className="mt-2 text-xs text-muted-foreground">
+                  <p className="mt-2 text-sm text-muted-foreground">
                     {item.location} · £{item.weeklyRate} per week
                   </p>
-                  <p className="mt-1 text-xs text-muted-foreground">
+                  <p className="mt-1 text-sm text-muted-foreground">
                     {item.occupied} of {item.capacity} places taken
                   </p>
                 </Link>

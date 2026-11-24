@@ -49,10 +49,10 @@ export const SurveyCreatorModal: React.FC<SurveyCreatorModalProps> = ({ formId, 
       className="inset-0 m-0 h-dvh max-h-none w-screen max-w-none flex-col overflow-hidden open:flex"
       onClose={onClose}
     >
-      <div className="flex shrink-0 flex-col gap-3 border-b border-border p-4 md:flex-row md:items-start md:justify-between md:gap-5 md:px-6 md:py-4 lg:items-center">
+      <div className="flex shrink-0 flex-col gap-3 border-b border-border p-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h2 className="text-base leading-tight font-semibold tracking-tight lg:text-lg">Form Builder: {title}</h2>
-          <p className="mt-1 text-xs text-muted-foreground md:max-lg:max-w-120">
+          <h2 className="text-base leading-none font-medium">Form Builder: {title}</h2>
+          <p className="mt-2 text-sm text-muted-foreground md:max-lg:max-w-120">
             This saves the form definition only. It does not create a student, registration, or other record.
             {licensed ? '' : ' Survey Creator is a commercial product and shows a license banner until SURVEYJS_KEY is set.'}
           </p>
@@ -63,7 +63,7 @@ export const SurveyCreatorModal: React.FC<SurveyCreatorModalProps> = ({ formId, 
             Save &amp; Apply Form
           </Button>
           <button type="button" className={`${iconButtonClass} max-md:ml-auto`} aria-label="Close Form Builder" onClick={onClose}>
-            <Icon name="x" />
+            <Icon name="x" className="size-4" />
           </button>
         </div>
       </div>

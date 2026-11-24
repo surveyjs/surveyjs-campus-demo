@@ -8,7 +8,7 @@ import { Icon } from '../../ui/Icon';
 const NavItem: React.FC<{ label: string; path: string; active: boolean }> = ({ label, path, active }) => (
   <Link
     to={path}
-    className="relative flex items-center text-xs font-semibold whitespace-nowrap text-muted-foreground hover:text-primary aria-[current=page]:text-primary aria-[current=page]:after:absolute aria-[current=page]:after:inset-x-0 aria-[current=page]:after:-bottom-px aria-[current=page]:after:h-1 aria-[current=page]:after:rounded-t-sm aria-[current=page]:after:bg-primary xl:text-sm"
+    className="inline-flex h-9 items-center justify-center rounded-lg px-2.5 py-1.5 text-sm font-medium whitespace-nowrap text-foreground transition-colors hover:bg-muted focus:bg-muted aria-[current=page]:bg-muted/50 aria-[current=page]:hover:bg-muted"
     aria-current={active ? 'page' : undefined}
   >
     {label}
@@ -32,13 +32,13 @@ export const AppShell: React.FC<AppShellProps> = ({ user, onLogout, children }) 
         <div className="mx-auto flex max-w-312 flex-wrap items-center gap-x-4 gap-y-1 px-4 py-2 sm:px-5 md:px-6 xl:min-h-16 xl:flex-nowrap xl:gap-6 xl:py-0 xl:px-8">
           <Link
             to={user ? homePath(user.role) : '/login'}
-            className="flex shrink-0 items-center gap-2 text-xs font-bold tracking-widest text-primary xl:text-sm"
+            className="flex shrink-0 items-center gap-2 text-sm font-medium text-foreground"
           >
-            <Icon name="book" className="size-6 sm:size-7" />
+            <Icon name="book" className="size-4" />
             Acme Campus
           </Link>
           <nav
-            className="order-3 flex min-h-9 basis-full flex-wrap items-center gap-x-4 gap-y-1 sm:gap-x-6 xl:order-none xl:min-w-0 xl:basis-auto xl:flex-1 xl:flex-nowrap xl:gap-5"
+            className="order-3 flex min-h-9 basis-full flex-wrap items-center gap-1 xl:order-none xl:min-w-0 xl:basis-auto xl:flex-1 xl:flex-nowrap"
             aria-label="Primary navigation"
           >
             {!user ? null : student ? (
@@ -59,13 +59,13 @@ export const AppShell: React.FC<AppShellProps> = ({ user, onLogout, children }) 
             )}
           </nav>
           {user ? (
-            <div className="account ml-auto flex items-center gap-2 text-xs whitespace-nowrap sm:gap-3 xl:gap-4">
+            <div className="account ml-auto flex items-center gap-2 text-sm whitespace-nowrap text-muted-foreground">
               <span>
-                Logged in as <strong className="font-semibold">{user.fullName}</strong>
+                Logged in as <strong className="font-medium text-foreground">{user.fullName}</strong>
               </span>
               <button
                 type="button"
-                className="flex items-center gap-2 border-l border-border pl-2 text-muted-foreground hover:text-primary sm:pl-3 xl:pl-4"
+                className="inline-flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-sm font-medium text-foreground hover:bg-muted"
                 aria-label="Log out"
                 onClick={onLogout}
               >
@@ -74,7 +74,7 @@ export const AppShell: React.FC<AppShellProps> = ({ user, onLogout, children }) 
               </button>
             </div>
           ) : (
-            <span className="ml-auto inline-flex shrink-0 items-center rounded-full border border-border px-3 py-1 text-xs font-semibold whitespace-nowrap text-muted-foreground">
+            <span className="ml-auto inline-flex h-5 shrink-0 items-center rounded-4xl border border-border px-2 text-xs font-medium whitespace-nowrap text-foreground">
               Local demo
             </span>
           )}
@@ -87,7 +87,7 @@ export const AppShell: React.FC<AppShellProps> = ({ user, onLogout, children }) 
         )}
       >
         {children}
-        <footer className="mt-6 text-right text-xs text-subtle-foreground">
+        <footer className="mt-6 text-right text-sm text-muted-foreground">
           Local Campus demo · Changes are saved in the local database
         </footer>
       </main>

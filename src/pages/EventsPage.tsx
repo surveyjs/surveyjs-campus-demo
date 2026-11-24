@@ -84,7 +84,7 @@ export const EventsPage: React.FC<EventsPageProps> = ({ user, onOpenFormBuilder,
   if (eventId && !loading && error && !event) {
     return (
       <section className={emptyPanelClass}>
-        <h2 className="text-base font-semibold">Event not found</h2>
+        <h2 className="text-base font-medium">Event not found</h2>
         <Link to="/events" className="mt-3 inline-flex text-primary">
           Back to events
         </Link>
@@ -119,14 +119,14 @@ export const EventsPage: React.FC<EventsPageProps> = ({ user, onOpenFormBuilder,
             <PanelHeading title="Event Details" icon="map-pin">
               <Pill>{event.registrationStatus}</Pill>
             </PanelHeading>
-            <div className="grid gap-4 px-5 py-5 text-sm md:grid-cols-2 md:px-6">
+            <div className="grid gap-4 px-4 py-4 text-sm md:grid-cols-2">
               <p><span className="text-muted-foreground">When · </span>{formatDate(event.eventDate)}</p>
               <p><span className="text-muted-foreground">Where · </span>{event.location}</p>
               <p><span className="text-muted-foreground">Capacity · </span>{event.capacity}</p>
               <p><span className="text-muted-foreground">Registered · </span>{event.registeredCount}</p>
               <p className="md:col-span-2">{event.description}</p>
               {event.baselineRegistrations > 0 && (
-                <p className="md:col-span-2 text-xs text-muted-foreground">
+                <p className="md:col-span-2 text-sm text-muted-foreground">
                   {event.baselineRegistrations} earlier registrations are included in the count and are not listed by name.
                 </p>
               )}
@@ -134,14 +134,14 @@ export const EventsPage: React.FC<EventsPageProps> = ({ user, onOpenFormBuilder,
           </section>
           <section className={panelClass}>
             <PanelHeading title="Registered Participants" icon="users" />
-            <div className="px-5 py-5 md:px-6">
+            <div className="px-4 py-4">
               {event.participants.length ? (
                 <ul className="flex flex-col gap-3">
                   {event.participants.map((person) => (
-                    <li key={person.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border px-4 py-3">
+                    <li key={person.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border px-3 py-2">
                       <div>
-                        <p className="font-semibold">{person.studentName}</p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="font-medium">{person.studentName}</p>
+                        <p className="text-sm text-muted-foreground">
                           {person.studentNumber} · {person.areaOfInterest || 'No area recorded'}
                         </p>
                       </div>
@@ -169,24 +169,24 @@ export const EventsPage: React.FC<EventsPageProps> = ({ user, onOpenFormBuilder,
               ) : undefined
             }
           />
-          {error && <p className="mb-4 text-danger">{error}</p>}
+          {error && <p className="mb-4 rounded-lg bg-danger/10 px-2.5 py-2 text-sm text-danger">{error}</p>}
           {loading ? (
             <p className="text-muted-foreground">Loading events…</p>
           ) : (
             <div className="grid gap-4 md:grid-cols-2">
               {events.map((item) => (
-                <Link key={item.id} to={`/events/${item.id}`} className={`${panelClass} block px-5 py-5 hover:bg-card-hover md:px-6`}>
+                <Link key={item.id} to={`/events/${item.id}`} className={`${panelClass} block px-4 py-4 hover:bg-muted`}>
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-xs font-semibold text-primary">{item.category}</p>
-                      <h2 className="mt-1 text-base font-semibold">{item.name}</h2>
+                      <p className="text-sm font-medium text-muted-foreground">{item.category}</p>
+                      <h2 className="mt-1 text-base leading-snug font-medium">{item.name}</h2>
                     </div>
                     <Pill>{item.registrationStatus}</Pill>
                   </div>
-                  <p className="mt-2 text-xs text-muted-foreground">
+                  <p className="mt-2 text-sm text-muted-foreground">
                     {formatDate(item.eventDate)} · {item.location}
                   </p>
-                  <p className="mt-1 text-xs text-muted-foreground">
+                  <p className="mt-1 text-sm text-muted-foreground">
                     {item.registeredCount} of {item.capacity} registered
                   </p>
                 </Link>

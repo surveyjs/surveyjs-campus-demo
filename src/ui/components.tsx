@@ -10,10 +10,10 @@ import { Icon } from './Icon';
 export const cx = (...classes: (string | false | null | undefined)[]) => classes.filter(Boolean).join(' ');
 
 // `panel` is a hook for demoTools.mark(), which moves the SurveyJS outline onto the card.
-export const panelClass = 'panel overflow-hidden rounded-card border border-border bg-card';
-export const panelBodyClass = 'px-5 py-5 md:px-6';
+export const panelClass = 'panel overflow-hidden rounded-xl bg-card text-sm text-card-foreground ring-1 ring-foreground/10';
+export const panelBodyClass = 'px-4 py-4';
 export const mutedClass = 'text-muted-foreground';
-export const emptyPanelClass = cx(panelClass, 'px-5 py-8 text-center sm:px-6 sm:py-10');
+export const emptyPanelClass = cx(panelClass, 'px-4 py-8 text-center');
 
 export const PageHeading: React.FC<{
   title: string;
@@ -23,12 +23,12 @@ export const PageHeading: React.FC<{
   action?: React.ReactNode;
 }> = ({ title, description, icon, action }) => {
   const heading = (
-    <header className={cx('flex items-start gap-4', action ? 'mb-4 xl:mb-8' : 'mb-6 md:mb-8')}>
-      <span className="mt-1 flex size-10 shrink-0 items-center justify-center rounded-xl border border-primary-border bg-primary-soft text-primary md:size-12">
-        <Icon name={icon} className="size-5 md:size-6" />
+    <header className={cx('flex items-start gap-3', action ? 'mb-4 xl:mb-0' : 'mb-6')}>
+      <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-foreground">
+        <Icon name={icon} className="size-4" />
       </span>
       <div>
-        <h1 className="text-2xl leading-tight font-bold tracking-tight md:text-3xl">{title}</h1>
+        <h1 className="text-2xl leading-none font-medium tracking-tight">{title}</h1>
         {description && <p className="mt-2 text-sm text-muted-foreground">{description}</p>}
       </div>
     </header>
@@ -50,13 +50,13 @@ export const PanelHeading: React.FC<{
   children?: React.ReactNode;
 }> = ({ title, icon, description, children }) => {
   const heading = (
-    <h2 className="flex items-center gap-2 text-base leading-tight font-semibold tracking-tight sm:text-lg">
-      {icon && <Icon name={icon} className="size-4 text-primary sm:size-5" />}
+    <h2 className="flex items-center gap-2 text-base leading-snug font-medium">
+      {icon && <Icon name={icon} className="size-4 text-foreground" />}
       {title}
     </h2>
   );
   return (
-    <div className="mx-5 flex min-h-18 flex-wrap items-center justify-between gap-2 border-b border-border py-5 md:mx-6 xl:gap-4">
+    <div className="mx-4 flex min-h-14 flex-wrap items-center justify-between gap-2 border-b border-border py-4">
       {description ? (
         <div>
           {heading}
@@ -77,20 +77,17 @@ export interface Crumb {
 
 // Breadcrumbs express page hierarchy; top-level tabs do not repeat it.
 export const Breadcrumbs: React.FC<{ items: Crumb[] }> = ({ items }) => (
-  <nav className="mb-4 text-xs" aria-label="Breadcrumb">
-    <ol role="list" className="flex flex-wrap items-center gap-x-2">
+  <nav className="mb-4" aria-label="Breadcrumb">
+    <ol role="list" className="flex flex-wrap items-center gap-1.5 text-sm text-muted-foreground">
       {items.map((item, index) => (
-        <li key={item.label} className="flex max-w-full min-w-0 items-center gap-2">
-          {index > 0 && <Icon name="chevron-right" className="size-4 text-subtle-foreground" />}
+        <li key={item.label} className="inline-flex max-w-full min-w-0 items-center gap-1.5">
+          {index > 0 && <Icon name="chevron-right" className="size-3.5" />}
           {item.path ? (
-            <Link
-              to={item.path}
-              className="inline-flex min-h-8 items-center py-1 text-primary underline underline-offset-4 wrap-anywhere hover:text-primary-hover"
-            >
+            <Link to={item.path} className="wrap-anywhere transition-colors hover:text-foreground">
               {item.label}
             </Link>
           ) : (
-            <span aria-current="page" className="inline-flex min-h-8 items-center py-1 text-muted-foreground wrap-anywhere">
+            <span aria-current="page" className="font-normal text-foreground wrap-anywhere">
               {item.label}
             </span>
           )}
@@ -104,22 +101,22 @@ export type ButtonVariant = 'outline' | 'primary' | 'danger';
 export type ButtonSize = 'md' | 'sm' | 'xs' | 'icon';
 
 const BUTTON_VARIANTS: Record<ButtonVariant, string> = {
-  outline: 'border-input bg-card text-primary hover:border-border-hover hover:bg-accent',
-  primary: 'border-primary bg-primary text-primary-foreground hover:border-primary-hover hover:bg-primary-hover',
-  danger: 'border-danger-border bg-card text-danger hover:bg-accent',
+  outline: 'border border-outline-border bg-outline-bg text-foreground hover:bg-outline-hover',
+  primary: 'border border-transparent bg-primary text-primary-foreground hover:bg-primary/80',
+  danger: 'border border-transparent bg-danger/10 text-danger hover:bg-danger/20',
 };
 
 const BUTTON_SIZES: Record<ButtonSize, string> = {
-  md: 'min-h-11 gap-2 px-4 py-2 text-sm [&_svg]:size-4',
-  sm: 'min-h-10 gap-2 px-3 py-2 text-xs [&_svg]:size-4',
-  xs: 'min-h-7 gap-1 rounded px-2 py-1 text-xs',
-  icon: 'size-10 [&_svg]:size-5',
+  md: 'h-8 gap-1.5 px-2.5',
+  sm: 'h-7 gap-1 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem]',
+  xs: 'h-6 gap-1 rounded-[min(var(--radius-md),10px)] px-2 text-xs',
+  icon: 'size-8',
 };
 
 /** Shared by <Button> and router links styled as buttons. */
 export const buttonClass = (variant: ButtonVariant = 'outline', size: ButtonSize = 'md', className?: string) =>
   cx(
-    'inline-flex items-center justify-center rounded-md border font-semibold whitespace-nowrap transition-colors disabled:cursor-not-allowed disabled:opacity-50',
+    'inline-flex shrink-0 items-center justify-center rounded-lg text-sm font-medium whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0',
     BUTTON_VARIANTS[variant],
     BUTTON_SIZES[size],
     className,
@@ -131,21 +128,23 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   size?: ButtonSize;
 };
 
-export const Button: React.FC<ButtonProps> = ({ icon, variant, size, className, children, ...rest }) => (
+const BUTTON_ICON: Record<ButtonSize, string> = { md: 'size-4', sm: 'size-3.5', xs: 'size-3', icon: 'size-4' };
+
+export const Button: React.FC<ButtonProps> = ({ icon, variant, size = 'md', className, children, ...rest }) => (
   <button type="button" className={buttonClass(variant, size, className)} {...rest}>
-    {icon && <Icon name={icon} />}
+    {icon && <Icon name={icon} className={BUTTON_ICON[size]} />}
     {children}
   </button>
 );
 
 export const iconButtonClass =
-  'flex size-10 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-primary-soft hover:text-primary';
+  'inline-flex size-7 shrink-0 items-center justify-center rounded-lg text-foreground hover:bg-muted [&_svg]:size-4';
 
 export const Pill: React.FC<{ tone?: 'brand' | 'neutral'; children: React.ReactNode }> = ({ tone = 'brand', children }) => (
   <span
     className={cx(
-      'inline-flex shrink-0 items-center justify-center rounded-full px-3 py-1 text-xs font-semibold whitespace-nowrap',
-      tone === 'brand' ? 'bg-tag text-primary' : 'bg-muted text-muted-foreground',
+      'inline-flex h-5 w-fit shrink-0 items-center justify-center rounded-4xl border px-2 py-0.5 text-xs font-medium whitespace-nowrap',
+      tone === 'brand' ? 'border-transparent bg-secondary text-secondary-foreground' : 'border-border text-foreground',
     )}
   >
     {children}

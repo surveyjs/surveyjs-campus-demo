@@ -34,7 +34,7 @@ function Facts({ items }: { items: [string, string][] }) {
     <dl className="grid gap-x-6 gap-y-4 sm:grid-cols-2">
       {items.map(([label, value]) => (
         <div key={label}>
-          <dt className="text-xs text-muted-foreground">{label}</dt>
+          <dt className="text-sm text-muted-foreground">{label}</dt>
           <dd className="mt-1 wrap-anywhere">{value || '—'}</dd>
         </div>
       ))}
@@ -80,7 +80,7 @@ export const StudentProfilePage: React.FC<StudentProfilePageProps> = ({
   if (error || !profile) {
     return (
       <section className={emptyPanelClass}>
-        <h2 className="text-base font-semibold">Student record unavailable</h2>
+        <h2 className="text-base font-medium">Student record unavailable</h2>
         <p className="mt-2 text-sm text-muted-foreground">{error || 'This student was not found.'}</p>
       </section>
     );
@@ -135,7 +135,7 @@ export const StudentProfilePage: React.FC<StudentProfilePageProps> = ({
 
       <section className={`${panelClass} mb-4`}>
         <PanelHeading title="Basic Details" icon="user" />
-        <div className="px-5 py-5 md:px-6">
+        <div className="px-4 py-4">
           <Facts
             items={[
               ['Student ID', profile.studentNumber],
@@ -152,7 +152,7 @@ export const StudentProfilePage: React.FC<StudentProfilePageProps> = ({
 
       <section className={`${panelClass} mb-4`}>
         <PanelHeading title="Contact Details" icon="file-text" />
-        <div className="px-5 py-5 md:px-6">
+        <div className="px-4 py-4">
           <Facts
             items={[
               ['Phone', profile.phone],
@@ -165,18 +165,18 @@ export const StudentProfilePage: React.FC<StudentProfilePageProps> = ({
 
       <section className={`${panelClass} mb-4`}>
         <PanelHeading title="Course Registrations" icon="book" />
-        <div className="px-5 py-5 md:px-6">
+        <div className="px-4 py-4">
           {profile.courses.length ? (
             <ul className="flex flex-col gap-3">
               {profile.courses.map((course) => (
-                <li key={course.id} className="rounded-md border border-border px-4 py-3">
+                <li key={course.id} className="rounded-lg border border-border px-3 py-2">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <Link to={`/courses/${course.courseId}`} className="font-semibold text-primary">
+                    <Link to={`/courses/${course.courseId}`} className="font-medium text-foreground hover:underline">
                       {course.courseCode} · {course.courseName}
                     </Link>
                     <Pill>{course.status}</Pill>
                   </div>
-                  <p className="mt-1 text-xs text-muted-foreground">
+                  <p className="mt-1 text-sm text-muted-foreground">
                     {course.semester} · {course.enrollmentType} · {formatDate(course.registrationDate)}
                   </p>
                 </li>
@@ -190,18 +190,18 @@ export const StudentProfilePage: React.FC<StudentProfilePageProps> = ({
 
       <section className={`${panelClass} mb-4`}>
         <PanelHeading title="Accommodation" icon="home" />
-        <div className="px-5 py-5 md:px-6">
+        <div className="px-4 py-4">
           {profile.accommodation.length ? (
             <ul className="flex flex-col gap-3">
               {profile.accommodation.map((place) => (
-                <li key={place.id} className="rounded-md border border-border px-4 py-3">
+                <li key={place.id} className="rounded-lg border border-border px-3 py-2">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <Link to={`/accommodation/${place.residenceId}`} className="font-semibold text-primary">
+                    <Link to={`/accommodation/${place.residenceId}`} className="font-medium text-foreground hover:underline">
                       {place.residenceName}
                     </Link>
                     <Pill>{place.status}</Pill>
                   </div>
-                  <p className="mt-1 text-xs text-muted-foreground">
+                  <p className="mt-1 text-sm text-muted-foreground">
                     {place.category} · {place.roomType} · {place.contract}
                   </p>
                 </li>
@@ -215,15 +215,15 @@ export const StudentProfilePage: React.FC<StudentProfilePageProps> = ({
 
       <section className={`${panelClass} mb-4`}>
         <PanelHeading title="Academic Advising" icon="calendar" />
-        <div className="px-5 py-5 md:px-6">
+        <div className="px-4 py-4">
           {profile.advising.length ? (
             <ul className="flex flex-col gap-3">
               {profile.advising.map((meeting) => (
-                <li key={meeting.id} className="rounded-md border border-border px-4 py-3">
+                <li key={meeting.id} className="rounded-lg border border-border px-3 py-2">
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <div>
-                      <p className="font-semibold">{meeting.topic}</p>
-                      <p className="mt-1 text-xs text-muted-foreground">
+                      <p className="font-medium">{meeting.topic}</p>
+                      <p className="mt-1 text-sm text-muted-foreground">
                         {formatDate(meeting.meetingDate)} · {meeting.advisorName}
                         {meeting.followUpDate ? ` · Follow-up ${formatDate(meeting.followUpDate)}` : ''}
                       </p>
@@ -246,12 +246,12 @@ export const StudentProfilePage: React.FC<StudentProfilePageProps> = ({
 
       <section className={panelClass}>
         <PanelHeading title="Support Requests" icon="clipboard" />
-        <div className="px-5 py-5 md:px-6">
+        <div className="px-4 py-4">
           <div className="mb-4 flex flex-wrap gap-3">
-            <label className="text-xs text-muted-foreground">
+            <label className="text-sm text-muted-foreground">
               Status
               <select
-                className="mt-1 block min-h-10 rounded-md border border-input bg-card px-3 text-sm text-foreground"
+                className="mt-1 block h-8 rounded-lg border border-input bg-transparent px-2.5 text-sm text-foreground"
                 value={statusFilter}
                 onChange={(event) => setStatusFilter(event.target.value)}
               >
@@ -261,10 +261,10 @@ export const StudentProfilePage: React.FC<StudentProfilePageProps> = ({
                 ))}
               </select>
             </label>
-            <label className="text-xs text-muted-foreground">
+            <label className="text-sm text-muted-foreground">
               Request type
               <select
-                className="mt-1 block min-h-10 rounded-md border border-input bg-card px-3 text-sm text-foreground"
+                className="mt-1 block h-8 rounded-lg border border-input bg-transparent px-2.5 text-sm text-foreground"
                 value={typeFilter}
                 onChange={(event) => setTypeFilter(event.target.value)}
               >
@@ -280,11 +280,11 @@ export const StudentProfilePage: React.FC<StudentProfilePageProps> = ({
           {requests.length ? (
             <ul className="flex flex-col gap-3">
               {requests.map((request) => (
-                <li key={request.id} className="rounded-md border border-border px-4 py-3">
+                <li key={request.id} className="rounded-lg border border-border px-3 py-2">
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <div>
-                      <p className="font-semibold">{request.requestType}</p>
-                      <p className="mt-1 text-xs text-muted-foreground">
+                      <p className="font-medium">{request.requestType}</p>
+                      <p className="mt-1 text-sm text-muted-foreground">
                         {formatDate(request.createdAt)} · {request.priority}
                         {request.assignedToName ? ` · ${request.assignedToName}` : ' · Unassigned'}
                       </p>
@@ -299,9 +299,9 @@ export const StudentProfilePage: React.FC<StudentProfilePageProps> = ({
                     </div>
                   </div>
                   <p className="mt-2 text-sm">{request.description}</p>
-                  {request.supportingInformation && <p className="mt-1 text-xs text-muted-foreground">{request.supportingInformation}</p>}
+                  {request.supportingInformation && <p className="mt-1 text-sm text-muted-foreground">{request.supportingInformation}</p>}
                   {request.history.length > 1 && (
-                    <ol className="mt-3 border-t border-border-subtle pt-2 text-xs text-muted-foreground">
+                    <ol className="mt-3 border-t border-border-subtle pt-2 text-sm text-muted-foreground">
                       {request.history.map((event) => (
                         <li key={event.id}>
                           {formatDate(event.createdAt)} · {event.status}

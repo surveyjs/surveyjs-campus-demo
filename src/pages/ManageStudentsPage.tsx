@@ -83,7 +83,7 @@ export const ManageStudentsPage: React.FC<ManageStudentsPageProps> = ({ canCusto
         description="Search by name, date of birth, or student ID. A name can be a first name, a surname, or both. Leave the fields blank to list every student."
         icon="users"
       />
-      {error && <p className="mb-4 rounded-md border border-danger-border px-4 py-3 text-danger">{error}</p>}
+      {error && <p className="mb-4 rounded-lg bg-danger/10 px-2.5 py-2 text-sm text-danger">{error}</p>}
       <section className={cx(panelClass, 'search-panel')}>
         <SurveyRenderer
           id="survey-search"
@@ -116,7 +116,7 @@ export const ManageStudentsPage: React.FC<ManageStudentsPageProps> = ({ canCusto
           onModelReady={(model) => (searchModel.current = model)}
         />
       </section>
-      <h3 className="mt-7 mb-4 text-sm font-semibold text-muted-foreground" aria-live="polite">
+      <h3 className="mt-6 mb-4 text-sm font-medium text-muted-foreground" aria-live="polite">
         {matchText}
       </h3>
       {rows.length ? (
@@ -127,10 +127,10 @@ export const ManageStudentsPage: React.FC<ManageStudentsPageProps> = ({ canCusto
         </div>
       ) : (
         <div className={emptyPanelClass}>
-          <span className="mx-auto mb-4 flex size-11 items-center justify-center rounded-xl bg-primary-soft text-primary">
-            <Icon name="users" />
+          <span className="mx-auto mb-4 flex size-8 items-center justify-center rounded-lg bg-muted text-foreground">
+            <Icon name="users" className="size-4" />
           </span>
-          <h3 className="text-base font-semibold">No students matched your search</h3>
+          <h3 className="text-base font-medium">No students matched your search</h3>
           <p className="mx-auto mt-2 max-w-140 text-sm text-muted-foreground">Try a different name, date of birth, or student ID.</p>
         </div>
       )}

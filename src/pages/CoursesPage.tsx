@@ -50,7 +50,7 @@ export const CoursesPage: React.FC<CoursesPageProps> = ({ user, onOpenFormBuilde
   if (courseId && !loading && !course) {
     return (
       <section className={emptyPanelClass}>
-        <h2 className="text-base font-semibold">Course not found</h2>
+        <h2 className="text-base font-medium">Course not found</h2>
         <Link to="/courses" className="mt-3 inline-flex text-primary">
           Back to courses
         </Link>
@@ -80,7 +80,7 @@ export const CoursesPage: React.FC<CoursesPageProps> = ({ user, onOpenFormBuilde
             <PanelHeading title="Course Details" icon="book">
               <Pill tone={course.status === 'active' ? 'brand' : 'neutral'}>{course.status === 'active' ? 'Active' : 'Inactive'}</Pill>
             </PanelHeading>
-            <div className="grid gap-4 px-5 py-5 text-sm md:grid-cols-2 md:px-6">
+            <div className="grid gap-4 px-4 py-4 text-sm md:grid-cols-2">
               <p><span className="text-muted-foreground">Semester · </span>{course.semester}</p>
               <p><span className="text-muted-foreground">Credits · </span>{course.credits}</p>
               <p><span className="text-muted-foreground">Instructor · </span>{course.instructor}</p>
@@ -107,23 +107,23 @@ export const CoursesPage: React.FC<CoursesPageProps> = ({ user, onOpenFormBuilde
               ) : undefined
             }
           />
-          {error && <p className="mb-4 text-danger">{error}</p>}
+          {error && <p className="mb-4 rounded-lg bg-danger/10 px-2.5 py-2 text-sm text-danger">{error}</p>}
           {loading ? (
             <p className="text-muted-foreground">Loading courses…</p>
           ) : (
             <div className="grid gap-4 md:grid-cols-2">
               {courses.map((item) => (
-                <Link key={item.id} to={`/courses/${item.id}`} className={`${panelClass} block px-5 py-5 hover:bg-card-hover md:px-6`}>
+                <Link key={item.id} to={`/courses/${item.id}`} className={`${panelClass} block px-4 py-4 hover:bg-muted`}>
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="font-semibold text-primary">{item.courseCode}</p>
-                      <h2 className="mt-1 text-base font-semibold">{item.name}</h2>
+                      <p className="text-sm font-medium text-muted-foreground">{item.courseCode}</p>
+                      <h2 className="mt-1 text-base leading-snug font-medium">{item.name}</h2>
                     </div>
                     <Pill tone={item.availablePlaces > 0 && item.status === 'active' ? 'brand' : 'neutral'}>
                       {item.status === 'active' ? `${item.availablePlaces} open` : 'Inactive'}
                     </Pill>
                   </div>
-                  <p className="mt-2 text-xs text-muted-foreground">
+                  <p className="mt-2 text-sm text-muted-foreground">
                     {item.semester} · {item.credits} credits · {item.instructor}
                   </p>
                 </Link>
