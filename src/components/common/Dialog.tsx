@@ -38,7 +38,7 @@ export const Dialog: React.FC<DialogProps> = ({ label, className = '', onClose, 
   return (
     <dialog
       ref={ref}
-      className={cx('overscroll-contain bg-card text-foreground backdrop:bg-foreground/35 backdrop:backdrop-blur-[2px]', className)}
+      className={cx('overscroll-contain bg-card text-foreground backdrop:bg-foreground/35 backdrop:backdrop-blur-xs', className)}
       aria-label={label}
     >
       {children}
@@ -61,23 +61,23 @@ export const Modal: React.FC<ModalProps> = ({ heading, description, form = false
   <Dialog
     label={heading}
     className={cx(
-      'm-auto mb-[104px] max-h-[calc(100dvh-168px)] rounded-xl border border-border shadow-dialog',
+      'm-auto mb-(--campus-dock-offset) max-h-[calc(100dvh-var(--campus-dock-offset)-4rem)] rounded-xl border border-border shadow-dialog',
       form ? 'w-190 max-w-[calc(100vw-24px)] md:max-w-[calc(100vw-32px)]' : 'w-130 max-w-[calc(100vw-32px)]',
     )}
     onClose={onClose}
   >
-    <div className={cx('flex justify-between gap-4 border-b border-border p-5 sm:px-6 sm:py-5.5', form && 'items-center')}>
+    <div className={cx('flex justify-between gap-4 border-b border-border p-5 sm:px-6', form && 'items-center')}>
       <div className="min-w-0">
-        <h2 className={cx('leading-normal font-semibold tracking-tight wrap-anywhere', form ? 'text-lg md:text-xl' : 'text-lg')}>
+        <h2 className={cx('leading-tight font-semibold tracking-tight wrap-anywhere', form ? 'text-lg md:text-xl' : 'text-lg')}>
           {heading}
         </h2>
-        {description && <p className="mt-1.25 text-[13px] text-muted-foreground">{description}</p>}
+        {description && <p className="mt-1 text-sm text-muted-foreground">{description}</p>}
       </div>
       <button type="button" className={iconButtonClass} aria-label="Close dialog" onClick={onClose}>
         <Icon name="x" />
       </button>
     </div>
-    <div className={form ? '' : 'p-5 text-sm leading-[1.8] text-muted-foreground sm:p-6'}>{children}</div>
-    {footer && <div className="flex justify-end gap-2.5 border-t border-border px-5 py-4 sm:px-6">{footer}</div>}
+    <div className={form ? '' : 'p-5 text-sm text-muted-foreground sm:p-6'}>{children}</div>
+    {footer && <div className="flex justify-end gap-2 border-t border-border px-5 py-4 sm:px-6">{footer}</div>}
   </Dialog>
 );

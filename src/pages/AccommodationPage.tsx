@@ -93,7 +93,7 @@ export const AccommodationPage: React.FC<AccommodationPageProps> = ({ user, onOp
             <PanelHeading title="Hall Details" icon="home">
               <Pill>{residence.occupancyStatus}</Pill>
             </PanelHeading>
-            <div className="grid gap-3 px-5 py-5 text-sm md:grid-cols-2 md:px-6">
+            <div className="grid gap-4 px-5 py-5 text-sm md:grid-cols-2 md:px-6">
               <p><span className="text-muted-foreground">Location · </span>{residence.location}</p>
               <p><span className="text-muted-foreground">Weekly rate · </span>£{residence.weeklyRate}</p>
               <p><span className="text-muted-foreground">Capacity · </span>{residence.capacity}</p>
@@ -110,7 +110,7 @@ export const AccommodationPage: React.FC<AccommodationPageProps> = ({ user, onOp
             <PanelHeading title="Named Residents" icon="users" />
             <div className="px-5 py-5 md:px-6">
               {residence.residents.length ? (
-                <ul className="flex flex-col gap-2">
+                <ul className="flex flex-col gap-3">
                   {residence.residents.map((person) => (
                     <li key={person.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border px-4 py-3">
                       <div>
@@ -149,9 +149,9 @@ export const AccommodationPage: React.FC<AccommodationPageProps> = ({ user, onOp
           {loading ? (
             <p className="text-muted-foreground">Loading halls…</p>
           ) : (
-            <div className="grid gap-3.5 md:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-2">
               {residences.map((item) => (
-                <Link key={item.id} to={`/accommodation/${item.id}`} className={`${panelClass} block px-5 py-4.5 hover:bg-card-hover md:px-6`}>
+                <Link key={item.id} to={`/accommodation/${item.id}`} className={`${panelClass} block px-5 py-5 hover:bg-card-hover md:px-6`}>
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-xs font-semibold text-primary">{item.category}</p>

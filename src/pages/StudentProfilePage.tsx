@@ -31,11 +31,11 @@ type DialogState =
 
 function Facts({ items }: { items: [string, string][] }) {
   return (
-    <dl className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
+    <dl className="grid gap-x-6 gap-y-4 sm:grid-cols-2">
       {items.map(([label, value]) => (
         <div key={label}>
           <dt className="text-xs text-muted-foreground">{label}</dt>
-          <dd className="mt-0.5 wrap-anywhere">{value || '—'}</dd>
+          <dd className="mt-1 wrap-anywhere">{value || '—'}</dd>
         </div>
       ))}
     </dl>

@@ -8,7 +8,7 @@ import { Icon } from '../../ui/Icon';
 const NavItem: React.FC<{ label: string; path: string; active: boolean }> = ({ label, path, active }) => (
   <Link
     to={path}
-    className="relative flex items-center text-[10px] font-semibold whitespace-nowrap text-muted-foreground hover:text-primary aria-[current=page]:text-primary aria-[current=page]:after:absolute aria-[current=page]:after:inset-x-0 aria-[current=page]:after:-bottom-px aria-[current=page]:after:h-0.75 aria-[current=page]:after:rounded-t-[3px] aria-[current=page]:after:bg-primary sm:text-xs xl:text-[13px]"
+    className="relative flex items-center text-xs font-semibold whitespace-nowrap text-muted-foreground hover:text-primary aria-[current=page]:text-primary aria-[current=page]:after:absolute aria-[current=page]:after:inset-x-0 aria-[current=page]:after:-bottom-px aria-[current=page]:after:h-1 aria-[current=page]:after:rounded-t-sm aria-[current=page]:after:bg-primary xl:text-sm"
     aria-current={active ? 'page' : undefined}
   >
     {label}
@@ -32,7 +32,7 @@ export const AppShell: React.FC<AppShellProps> = ({ user, onLogout, children }) 
         <div className="mx-auto flex max-w-312 flex-wrap items-center gap-x-4 gap-y-1 px-4 py-2 sm:px-5 md:px-6 xl:min-h-16 xl:flex-nowrap xl:gap-6 xl:py-0 xl:px-8">
           <Link
             to={user ? homePath(user.role) : '/login'}
-            className="flex shrink-0 items-center gap-2 text-[11px] font-bold tracking-[0.08em] text-primary sm:gap-2.5 sm:text-xs xl:text-sm"
+            className="flex shrink-0 items-center gap-2 text-xs font-bold tracking-widest text-primary xl:text-sm"
           >
             <Icon name="book" className="size-6 sm:size-7" />
             Acme Campus
@@ -59,22 +59,22 @@ export const AppShell: React.FC<AppShellProps> = ({ user, onLogout, children }) 
             )}
           </nav>
           {user ? (
-            <div className="account ml-auto flex items-center gap-2.25 text-[11px] whitespace-nowrap sm:gap-3 sm:text-xs xl:gap-4">
+            <div className="account ml-auto flex items-center gap-2 text-xs whitespace-nowrap sm:gap-3 xl:gap-4">
               <span>
                 Logged in as <strong className="font-semibold">{user.fullName}</strong>
               </span>
               <button
                 type="button"
-                className="flex items-center gap-2 border-l border-border pl-2.25 text-muted-foreground hover:text-primary sm:pl-3 xl:pl-4"
+                className="flex items-center gap-2 border-l border-border pl-2 text-muted-foreground hover:text-primary sm:pl-3 xl:pl-4"
                 aria-label="Log out"
                 onClick={onLogout}
               >
-                <Icon name="log-out" className="size-4.5" />
+                <Icon name="log-out" className="size-4" />
                 <span>Log out</span>
               </button>
             </div>
           ) : (
-            <span className="ml-auto inline-flex shrink-0 items-center rounded-full border border-border px-3 py-1.25 text-xs font-semibold whitespace-nowrap text-muted-foreground">
+            <span className="ml-auto inline-flex shrink-0 items-center rounded-full border border-border px-3 py-1 text-xs font-semibold whitespace-nowrap text-muted-foreground">
               Local demo
             </span>
           )}
@@ -82,12 +82,12 @@ export const AppShell: React.FC<AppShellProps> = ({ user, onLogout, children }) 
       </header>
       <main
         className={cx(
-          'mx-auto px-4 pb-26 sm:px-5 md:px-6 xl:px-8',
-          user ? 'max-w-312 pt-6 md:pt-9.5' : 'max-w-162.5 pt-7.5 md:pt-13.5',
+          'mx-auto px-4 pb-(--campus-dock-offset) sm:px-5 md:px-6 xl:px-8',
+          user ? 'max-w-312 pt-6 md:pt-10' : 'max-w-162 pt-8 md:pt-14',
         )}
       >
         {children}
-        <footer className="mt-6.5 text-right text-[10px] text-subtle-foreground sm:text-[11px]">
+        <footer className="mt-6 text-right text-xs text-subtle-foreground">
           Local Campus demo · Changes are saved in the local database
         </footer>
       </main>

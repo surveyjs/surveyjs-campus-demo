@@ -61,16 +61,19 @@
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
 
-  --campus-primary-hover: oklch(0.145 0 0);
-  --campus-primary-soft: oklch(0.97 0 0);
-  --campus-primary-border: oklch(0.922 0 0);
-  --campus-card-subtle: oklch(0.985 0 0);
-  --campus-card-hover: oklch(0.97 0 0);
+  /* Aliases of the neutral scaffold. One value, one name to edit. */
+  --campus-primary-hover: var(--foreground);
+  --campus-primary-soft: var(--secondary);
+  --campus-primary-border: var(--input);
+  --campus-card-subtle: var(--primary-foreground);
+  --campus-card-hover: var(--secondary);
+  --campus-subtle-foreground: var(--muted-foreground);
+  --campus-tag: var(--secondary);
   --campus-border-subtle: oklch(0.96 0 0);
   --campus-border-hover: oklch(0.8 0 0);
-  --campus-subtle-foreground: oklch(0.556 0 0);
-  --campus-tag: oklch(0.97 0 0);
-  --campus-danger-border: oklch(0.85 0.06 25);
+  /* Same hue as --destructive (27.325), lighter so it can sit on a border. */
+  --campus-danger-border: oklch(0.85 0.06 27.325);
+  --campus-dock-offset: 104px;
 }
 
 :root[data-theme="dark"] {
@@ -94,23 +97,17 @@
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
 
-  --campus-primary-hover: oklch(1 0 0);
-  --campus-primary-soft: oklch(0.269 0 0);
-  --campus-primary-border: oklch(1 0 0 / 15%);
-  --campus-card-subtle: oklch(0.205 0 0);
-  --campus-card-hover: oklch(0.269 0 0);
   --campus-border-subtle: oklch(1 0 0 / 8%);
   --campus-border-hover: oklch(1 0 0 / 24%);
-  --campus-subtle-foreground: oklch(0.708 0 0);
-  --campus-tag: oklch(0.269 0 0);
-  --campus-danger-border: oklch(0.45 0.1 22);
-  --shadow-dock: 0 8px 32px #0007;
+  /* Same hue as dark --destructive (22.216). */
+  --campus-danger-border: oklch(0.45 0.1 22.216);
+  --shadow-dock: 0 8px 28px oklch(0 0 0 / 0.45);
 }
 
 @layer base {
   html {
     scrollbar-gutter: stable;
-    scroll-padding-bottom: 104px;
+    scroll-padding-bottom: var(--campus-dock-offset);
   }
   html:has(dialog[open]) {
     overflow: hidden;
@@ -188,7 +185,7 @@
 :is(#survey-search, #medication-filters) .sd-body {
   display: grid;
   align-items: end;
-  gap: 20px;
+  gap: 16px;
   padding-inline: var(--campus-form-inset);
   @variant lg {
     grid-template-columns: minmax(0, 1fr) auto;
@@ -208,7 +205,7 @@
   container-type: inline-size;
 }
 #survey-search .sd-body {
-  gap: 12px;
+  gap: 16px;
   padding-top: 8px;
   padding-bottom: 16px;
 }
@@ -272,8 +269,8 @@
     border-radius: 0 var(--radius-card) 0 8px;
     background: var(--color-primary);
     color: var(--color-primary-foreground);
-    font: 600 10px/15px var(--font-sans);
-    letter-spacing: 0.8px;
+    font: 600 12px/1.6 var(--font-sans);
+    letter-spacing: 0.04em;
     text-transform: uppercase;
     pointer-events: none;
   }

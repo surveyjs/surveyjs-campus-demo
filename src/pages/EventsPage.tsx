@@ -119,7 +119,7 @@ export const EventsPage: React.FC<EventsPageProps> = ({ user, onOpenFormBuilder,
             <PanelHeading title="Event Details" icon="map-pin">
               <Pill>{event.registrationStatus}</Pill>
             </PanelHeading>
-            <div className="grid gap-3 px-5 py-5 text-sm md:grid-cols-2 md:px-6">
+            <div className="grid gap-4 px-5 py-5 text-sm md:grid-cols-2 md:px-6">
               <p><span className="text-muted-foreground">When · </span>{formatDate(event.eventDate)}</p>
               <p><span className="text-muted-foreground">Where · </span>{event.location}</p>
               <p><span className="text-muted-foreground">Capacity · </span>{event.capacity}</p>
@@ -136,7 +136,7 @@ export const EventsPage: React.FC<EventsPageProps> = ({ user, onOpenFormBuilder,
             <PanelHeading title="Registered Participants" icon="users" />
             <div className="px-5 py-5 md:px-6">
               {event.participants.length ? (
-                <ul className="flex flex-col gap-2">
+                <ul className="flex flex-col gap-3">
                   {event.participants.map((person) => (
                     <li key={person.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border px-4 py-3">
                       <div>
@@ -173,9 +173,9 @@ export const EventsPage: React.FC<EventsPageProps> = ({ user, onOpenFormBuilder,
           {loading ? (
             <p className="text-muted-foreground">Loading events…</p>
           ) : (
-            <div className="grid gap-3.5 md:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-2">
               {events.map((item) => (
-                <Link key={item.id} to={`/events/${item.id}`} className={`${panelClass} block px-5 py-4.5 hover:bg-card-hover md:px-6`}>
+                <Link key={item.id} to={`/events/${item.id}`} className={`${panelClass} block px-5 py-5 hover:bg-card-hover md:px-6`}>
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-xs font-semibold text-primary">{item.category}</p>

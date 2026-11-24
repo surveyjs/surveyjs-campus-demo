@@ -11,9 +11,9 @@ export const cx = (...classes: (string | false | null | undefined)[]) => classes
 
 // `panel` is a hook for demoTools.mark(), which moves the SurveyJS outline onto the card.
 export const panelClass = 'panel overflow-hidden rounded-card border border-border bg-card';
-export const panelBodyClass = 'px-5 pt-5 pb-6 md:px-6';
+export const panelBodyClass = 'px-5 py-5 md:px-6';
 export const mutedClass = 'text-muted-foreground';
-export const emptyPanelClass = cx(panelClass, 'px-5 py-7.5 text-center sm:px-6 sm:py-10');
+export const emptyPanelClass = cx(panelClass, 'px-5 py-8 text-center sm:px-6 sm:py-10');
 
 export const PageHeading: React.FC<{
   title: string;
@@ -23,17 +23,13 @@ export const PageHeading: React.FC<{
   action?: React.ReactNode;
 }> = ({ title, description, icon, action }) => {
   const heading = (
-    <header className={cx('flex items-start gap-3 md:gap-4.5', action ? 'mb-4.5 xl:mb-7.5' : 'mb-6 md:mb-7.5')}>
-      <span className="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-xl border border-primary-border bg-primary-soft text-primary md:size-12">
-        <Icon name={icon} className="size-5.5 md:size-6.5" />
+    <header className={cx('flex items-start gap-4', action ? 'mb-4 xl:mb-8' : 'mb-6 md:mb-8')}>
+      <span className="mt-1 flex size-10 shrink-0 items-center justify-center rounded-xl border border-primary-border bg-primary-soft text-primary md:size-12">
+        <Icon name={icon} className="size-5 md:size-6" />
       </span>
       <div>
-        <h1 className="text-2xl leading-[1.3] font-bold tracking-tight md:text-3xl">{title}</h1>
-        {description && (
-          <p className="mt-1.75 text-xs leading-[1.7] text-muted-foreground sm:text-[13px] md:mt-2.25 md:text-sm">
-            {description}
-          </p>
-        )}
+        <h1 className="text-2xl leading-tight font-bold tracking-tight md:text-3xl">{title}</h1>
+        {description && <p className="mt-2 text-sm text-muted-foreground">{description}</p>}
       </div>
     </header>
   );
@@ -54,17 +50,17 @@ export const PanelHeading: React.FC<{
   children?: React.ReactNode;
 }> = ({ title, icon, description, children }) => {
   const heading = (
-    <h2 className="flex items-center gap-2 text-base leading-normal font-semibold tracking-tight sm:gap-2.5 sm:text-lg">
-      {icon && <Icon name={icon} className="size-4.25 text-primary sm:size-4.75" />}
+    <h2 className="flex items-center gap-2 text-base leading-tight font-semibold tracking-tight sm:text-lg">
+      {icon && <Icon name={icon} className="size-4 text-primary sm:size-5" />}
       {title}
     </h2>
   );
   return (
-    <div className="mx-5 flex min-h-17.5 flex-wrap items-center justify-between gap-2.5 border-b border-border py-4.5 md:mx-6 xl:gap-4">
+    <div className="mx-5 flex min-h-18 flex-wrap items-center justify-between gap-2 border-b border-border py-5 md:mx-6 xl:gap-4">
       {description ? (
         <div>
           {heading}
-          <p className="mt-1.25 text-xs text-muted-foreground sm:text-[13px]">{description}</p>
+          <p className="mt-1 text-sm text-muted-foreground">{description}</p>
         </div>
       ) : (
         heading
@@ -81,20 +77,20 @@ export interface Crumb {
 
 // Breadcrumbs express page hierarchy; top-level tabs do not repeat it.
 export const Breadcrumbs: React.FC<{ items: Crumb[] }> = ({ items }) => (
-  <nav className="mb-3 text-xs leading-5 sm:mb-4" aria-label="Breadcrumb">
-    <ol role="list" className="flex flex-wrap items-center gap-x-1.5 sm:gap-x-2">
+  <nav className="mb-4 text-xs" aria-label="Breadcrumb">
+    <ol role="list" className="flex flex-wrap items-center gap-x-2">
       {items.map((item, index) => (
-        <li key={item.label} className="flex max-w-full min-w-0 items-center gap-1.5 sm:gap-2">
-          {index > 0 && <Icon name="chevron-right" className="size-3.5 text-subtle-foreground" />}
+        <li key={item.label} className="flex max-w-full min-w-0 items-center gap-2">
+          {index > 0 && <Icon name="chevron-right" className="size-4 text-subtle-foreground" />}
           {item.path ? (
             <Link
               to={item.path}
-              className="inline-flex min-h-8 items-center py-1.5 text-primary underline underline-offset-3 wrap-anywhere hover:text-primary-hover"
+              className="inline-flex min-h-8 items-center py-1 text-primary underline underline-offset-4 wrap-anywhere hover:text-primary-hover"
             >
               {item.label}
             </Link>
           ) : (
-            <span aria-current="page" className="inline-flex min-h-8 items-center py-1.5 text-muted-foreground wrap-anywhere">
+            <span aria-current="page" className="inline-flex min-h-8 items-center py-1 text-muted-foreground wrap-anywhere">
               {item.label}
             </span>
           )}
@@ -114,9 +110,9 @@ const BUTTON_VARIANTS: Record<ButtonVariant, string> = {
 };
 
 const BUTTON_SIZES: Record<ButtonSize, string> = {
-  md: 'min-h-11 gap-2 px-4 py-2.5 text-sm leading-[22px] [&_svg]:size-4.25',
-  sm: 'min-h-10 gap-2 px-3 py-2 text-xs leading-[22px] [&_svg]:size-4',
-  xs: 'min-h-7 gap-1.5 rounded px-2 py-0.75 text-xs leading-5',
+  md: 'min-h-11 gap-2 px-4 py-2 text-sm [&_svg]:size-4',
+  sm: 'min-h-10 gap-2 px-3 py-2 text-xs [&_svg]:size-4',
+  xs: 'min-h-7 gap-1 rounded px-2 py-1 text-xs',
   icon: 'size-10 [&_svg]:size-5',
 };
 
@@ -143,12 +139,12 @@ export const Button: React.FC<ButtonProps> = ({ icon, variant, size, className, 
 );
 
 export const iconButtonClass =
-  'flex size-9.5 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-primary-soft hover:text-primary';
+  'flex size-10 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-primary-soft hover:text-primary';
 
 export const Pill: React.FC<{ tone?: 'brand' | 'neutral'; children: React.ReactNode }> = ({ tone = 'brand', children }) => (
   <span
     className={cx(
-      'inline-flex shrink-0 items-center justify-center rounded-full px-3 py-1.25 text-xs font-semibold whitespace-nowrap',
+      'inline-flex shrink-0 items-center justify-center rounded-full px-3 py-1 text-xs font-semibold whitespace-nowrap',
       tone === 'brand' ? 'bg-tag text-primary' : 'bg-muted text-muted-foreground',
     )}
   >
@@ -163,7 +159,7 @@ export function editFormAction(formId: FormId, label: string, open: () => void):
     title: label,
     css: 'campus-edit-form',
     iconName: 'campus-feather-settings',
-    iconSize: 17,
+    iconSize: 16,
     showTitle: true,
     disableShrink: true,
     action: open,

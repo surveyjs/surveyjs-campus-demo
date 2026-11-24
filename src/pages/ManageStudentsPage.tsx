@@ -116,11 +116,11 @@ export const ManageStudentsPage: React.FC<ManageStudentsPageProps> = ({ canCusto
           onModelReady={(model) => (searchModel.current = model)}
         />
       </section>
-      <h3 className="mt-7 mb-3.75 text-sm font-semibold text-muted-foreground" aria-live="polite">
+      <h3 className="mt-7 mb-4 text-sm font-semibold text-muted-foreground" aria-live="polite">
         {matchText}
       </h3>
       {rows.length ? (
-        <div className="flex flex-col gap-3.5">
+        <div className="flex flex-col gap-4">
           {rows.map((student) => (
             <StudentCard key={student.id} student={student} />
           ))}

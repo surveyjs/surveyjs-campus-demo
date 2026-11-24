@@ -111,9 +111,9 @@ export const CoursesPage: React.FC<CoursesPageProps> = ({ user, onOpenFormBuilde
           {loading ? (
             <p className="text-muted-foreground">Loading courses…</p>
           ) : (
-            <div className="grid gap-3.5 md:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-2">
               {courses.map((item) => (
-                <Link key={item.id} to={`/courses/${item.id}`} className={`${panelClass} block px-5 py-4.5 hover:bg-card-hover md:px-6`}>
+                <Link key={item.id} to={`/courses/${item.id}`} className={`${panelClass} block px-5 py-5 hover:bg-card-hover md:px-6`}>
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="font-semibold text-primary">{item.courseCode}</p>
