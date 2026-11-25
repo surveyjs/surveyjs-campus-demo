@@ -152,7 +152,7 @@
   }
 }
 
-/* A divided header, footer actions, and the search form as one row with its button. */
+/* A divided header. Search actions sit under the fields. */
 .native-survey .sd-container-modern__title {
   box-shadow: 0 1px 0 var(--color-border);
   @variant max-md {
@@ -196,32 +196,36 @@
     padding: var(--campus-form-inset);
   }
 }
-:is(#survey-search, #medication-filters) .sd-body {
-  display: grid;
-  align-items: end;
+#survey-search {
+  container-type: inline-size;
+  --sjs2-layout-component-page-content-area-padding-horizontal: 0px;
+}
+#survey-search .sd-page__content {
+  padding-inline: 0;
+}
+#survey-search .sd-body {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
   gap: 16px;
   padding-inline: var(--campus-form-inset);
-  @variant lg {
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
+  padding-top: 8px;
+  padding-bottom: 16px;
 }
-:is(#survey-search, #medication-filters) .sd-footer {
-  @variant max-lg {
-    justify-content: flex-start;
-  }
+#survey-search .sd-footer {
+  justify-content: flex-start;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+#survey-search .sd-footer .sd-action-bar {
+  justify-content: flex-start;
+  gap: 8px;
 }
 #survey-search .sd-footer .campus-clear {
   margin: 0;
   flex: 0 0 auto;
   width: auto;
-}
-#survey-search {
-  container-type: inline-size;
-}
-#survey-search .sd-body {
-  gap: 16px;
-  padding-top: 8px;
-  padding-bottom: 16px;
 }
 #survey-search .sd-page {
   padding: 0;
@@ -251,6 +255,13 @@
 @container (width < 32rem) {
   #survey-search .sd-row.sd-page__row {
     grid-template-columns: minmax(0, 1fr);
+  }
+  #survey-search .sd-footer .sd-action-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  #survey-search .sd-footer .sd-action {
+    width: 100%;
   }
 }
 
