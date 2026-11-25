@@ -101,7 +101,7 @@ export const EventsPage: React.FC<EventsPageProps> = ({ user, onOpenFormBuilder,
           <div className="mb-5 flex flex-wrap gap-2">
             {canRegisterEvents(user.role) && event.registrationStatus === 'Open' && (
               <Button variant="primary" onClick={() => setDialog({ kind: 'register', event })}>
-                Register Student
+                {user.role === 'student' ? 'Register' : 'Register Student'}
               </Button>
             )}
             {canManageCatalog(user.role) && (

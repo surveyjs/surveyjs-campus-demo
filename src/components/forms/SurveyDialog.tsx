@@ -46,6 +46,7 @@ export const SurveyDialog: React.FC<SurveyDialogProps> = ({
         id={`${formId}-dialog`}
         schema={schema}
         data={data}
+        hideTitle
         actions={actions}
         prefill={prefill}
         configure={configure}

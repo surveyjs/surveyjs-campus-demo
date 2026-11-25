@@ -1,6 +1,5 @@
 {
   "title": "Search for a Student",
-  "description": "Results update as you type. Leave every field blank to list the directory.",
   "textUpdateMode": "onTyping",
   "pages": [
     {

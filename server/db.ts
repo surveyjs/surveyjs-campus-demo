@@ -310,6 +310,7 @@ export interface StudentSearchQuery {
   surname?: string;
   dateOfBirth?: string;
   studentNumber?: string;
+  courseCode?: string;
 }
 
 export interface SupportFilter {
@@ -339,6 +340,7 @@ export function createDb(dbPath: string) {
     return {
       id: row.id,
       studentNumber: row.student_number,
+      displayName: `${row.first_name} ${row.last_name}`,
       firstName: row.first_name,
       lastName: row.last_name,
       dateOfBirth: row.date_of_birth,
@@ -1014,6 +1016,129 @@ export function createDb(dbPath: string) {
   });
   widenStudentSearch();
 
+  const quietLoginCopy = db.transaction(() => {
+    const row = db
+      .prepare(
+        `SELECT d.name, v.version_number, v.schema_json
+         FROM form_definitions d
+         JOIN form_versions v ON v.id = d.active_version_id
+         WHERE d.id = 'login'`,
+      )
+      .get() as { name: string; version_number: number; schema_json: string } | undefined;
+    if (!row) return;
+    const schema = JSON.parse(row.schema_json) as {
+      title?: string;
+      pages?: { elements?: { name?: string; description?: string }[] }[];
+    };
+    let changed = false;
+    if (schema.title === 'Campus Sign In') {
+      schema.title = 'Sign In';
+      changed = true;
+    }
+    const password = schema.pages?.flatMap((page) => page.elements ?? []).find((element) => element.name === 'password');
+    if (password?.description?.includes('demo1234')) {
+      delete password.description;
+      changed = true;
+    }
+    const stamp = new Date().toISOString();
+    if (!changed) {
+      if (row.name === 'Campus Sign In') {
+        db.prepare(`UPDATE form_definitions SET name = 'Sign In', updated_at = ? WHERE id = 'login'`).run(stamp);
+      }
+      return;
+    }
+    const versionId = randomUUID();
+    db.prepare(
+      `INSERT INTO form_versions (id, form_id, version_number, schema_json, created_by, created_at) VALUES (?, 'login', ?, ?, 'system', ?)`,
+    ).run(versionId, row.version_number + 1, JSON.stringify(schema), stamp);
+    db.prepare(
+      `UPDATE form_definitions SET name = CASE WHEN name = 'Campus Sign In' THEN 'Sign In' ELSE name END, active_version_id = ?, updated_at = ? WHERE id = 'login'`,
+    ).run(versionId, stamp);
+  });
+  quietLoginCopy();
+
+  const compactCourseRegistration = db.transaction(() => {
+    const row = db
+      .prepare(
+        `SELECT v.version_number, v.schema_json
+         FROM form_definitions d
+         JOIN form_versions v ON v.id = d.active_version_id
+         WHERE d.id = 'course-registration'`,
+      )
+      .get() as { version_number: number; schema_json: string } | undefined;
+    if (!row) return;
+    const schema = JSON.parse(row.schema_json) as {
+      pages?: { elements?: { name?: string; type?: string; startWithNewLine?: boolean; placeholder?: string; choicesByUrl?: object }[] }[];
+    };
+    const elements = schema.pages?.flatMap((page) => page.elements ?? []) ?? [];
+    const student = elements.find((element) => element.name === 'student_number');
+    const course = elements.find((element) => element.name === 'course_code');
+    if (!student) return;
+    const choicesUrl = (student.choicesByUrl as { url?: string } | undefined)?.url ?? '';
+    const stockText = student.type === 'text';
+    const filteredList = student.type === 'dropdown' && choicesUrl.includes('courseCode=');
+    if (!stockText && !filteredList) return;
+    student.type = 'dropdown';
+    student.placeholder = 'Select a student';
+    student.choicesByUrl = { url: '/api/students', valueName: 'studentNumber', titleName: 'displayName' };
+    if (course) course.startWithNewLine = false;
+    const versionId = randomUUID();
+    const stamp = new Date().toISOString();
+    db.prepare(
+      `INSERT INTO form_versions (id, form_id, version_number, schema_json, created_by, created_at) VALUES (?, 'course-registration', ?, ?, 'system', ?)`,
+    ).run(versionId, row.version_number + 1, JSON.stringify(schema), stamp);
+    db.prepare(`UPDATE form_definitions SET active_version_id = ?, updated_at = ? WHERE id = 'course-registration'`).run(versionId, stamp);
+  });
+  compactCourseRegistration();
+
+  const publishActiveSchema = (formId: string, schema: object, versionNumber: number) => {
+    const versionId = randomUUID();
+    const stamp = new Date().toISOString();
+    db.prepare(
+      `INSERT INTO form_versions (id, form_id, version_number, schema_json, created_by, created_at) VALUES (?, ?, ?, ?, 'system', ?)`,
+    ).run(versionId, formId, versionNumber, JSON.stringify(schema), stamp);
+    db.prepare(`UPDATE form_definitions SET active_version_id = ?, updated_at = ? WHERE id = ?`).run(versionId, stamp, formId);
+  };
+
+  const activeSchema = (formId: string) =>
+    db
+      .prepare(
+        `SELECT v.version_number, v.schema_json
+         FROM form_definitions d
+         JOIN form_versions v ON v.id = d.active_version_id
+         WHERE d.id = ?`,
+      )
+      .get(formId) as { version_number: number; schema_json: string } | undefined;
+
+  const dropSearchDescription = db.transaction(() => {
+    const row = activeSchema('student-search');
+    if (!row) return;
+    const schema = JSON.parse(row.schema_json) as { description?: string };
+    if (schema.description !== 'Results update as you type. Leave every field blank to list the directory.') return;
+    delete schema.description;
+    publishActiveSchema('student-search', schema, row.version_number + 1);
+  });
+  dropSearchDescription();
+
+  const studentListQuestion = {
+    type: 'dropdown',
+    placeholder: 'Select a student',
+    choicesByUrl: { url: '/api/students', valueName: 'studentNumber', titleName: 'displayName' },
+  };
+  const useStudentList = db.transaction((formId: string) => {
+    const row = activeSchema(formId);
+    if (!row) return;
+    const schema = JSON.parse(row.schema_json) as {
+      pages?: { elements?: { name?: string; type?: string; placeholder?: string; choicesByUrl?: object }[] }[];
+    };
+    const student = schema.pages?.flatMap((page) => page.elements ?? []).find((element) => element.name === 'student_number');
+    if (!student || student.type !== 'text') return;
+    Object.assign(student, studentListQuestion);
+    publishActiveSchema(formId, schema, row.version_number + 1);
+  });
+  useStudentList('event-registration');
+  useStudentList('accommodation-application');
+
   if ((db.prepare('SELECT COUNT(*) AS count FROM residences').get() as { count: number }).count === 0) {
     const version = db.prepare(`SELECT id FROM form_versions WHERE form_id = 'accommodation-application' ORDER BY version_number DESC LIMIT 1`).get() as
       | { id: string }
@@ -1053,9 +1178,24 @@ export function createDb(dbPath: string) {
          ORDER BY s.last_name, s.first_name`,
       )
       .all(name, name, name, dateOfBirth, dateOfBirth, studentNumber, studentNumber) as any[];
-    const students = rows.map(rowToStudent);
-    if (viewer.role === 'student') return students.filter((student) => student.id === viewer.studentId);
-    return students;
+    let students = rows.map(rowToStudent);
+    if (viewer.role === 'student') students = students.filter((student) => student.id === viewer.studentId);
+    const courseCode = query.courseCode?.trim() ?? '';
+    if (!courseCode) return students;
+    const course = db.prepare('SELECT id FROM courses WHERE course_code = ? COLLATE NOCASE').get(courseCode) as { id: string } | undefined;
+    if (!course) return [];
+    const prerequisites = db.prepare('SELECT prerequisite_id FROM course_prerequisites WHERE course_id = ?').all(course.id) as {
+      prerequisite_id: string;
+    }[];
+    const registered = new Set(
+      (db.prepare('SELECT student_id FROM course_registrations WHERE course_id = ?').all(course.id) as { student_id: string }[]).map(
+        (item) => item.student_id,
+      ),
+    );
+    const completed = db.prepare('SELECT 1 FROM course_registrations WHERE student_id = ? AND course_id = ?');
+    return students.filter(
+      (student) => !registered.has(student.id) && prerequisites.every((item) => completed.get(student.id, item.prerequisite_id)),
+    );
   }
 
   function getProfile(id: string, viewer: AuthUser, filter?: SupportFilter): StudentProfile {
@@ -1440,6 +1580,12 @@ export function createDb(dbPath: string) {
         seedAll();
       });
       wipe();
+    },
+    resetDemo(actor: AuthUser): Session {
+      this.reset();
+      const token = randomBytes(32).toString('hex');
+      db.prepare('INSERT INTO sessions (token, user_id) VALUES (?, ?)').run(token, actor.id);
+      return { ...actor, token };
     },
     authenticate(username: string, password: string): Session | null {
       const row = db.prepare('SELECT * FROM users WHERE username = ? COLLATE NOCASE').get(username.trim()) as any;

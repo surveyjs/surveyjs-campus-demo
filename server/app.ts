@@ -82,15 +82,6 @@ export function createApp(db: CampusDb) {
     res.status(204).end();
   });
 
-  app.post('/api/admin/reset', (_req, res) => {
-    try {
-      db.reset();
-      res.json({ status: 'reset' });
-    } catch (error) {
-      fail(res, error);
-    }
-  });
-
   app.get('/api/forms', (_req, res) => {
     res.json(db.forms());
   });
@@ -98,6 +89,14 @@ export function createApp(db: CampusDb) {
   app.get('/api/forms/:id/versions', authenticate, allow('administrator'), (req, res) => {
     try {
       res.json(db.formVersions(req.params.id));
+    } catch (error) {
+      fail(res, error);
+    }
+  });
+
+  app.post('/api/admin/reset', authenticate, allow('administrator', 'academic', 'support'), (req, res) => {
+    try {
+      res.json(db.resetDemo((req as AuthedRequest).user));
     } catch (error) {
       fail(res, error);
     }
@@ -152,6 +151,7 @@ export function createApp(db: CampusDb) {
             surname: typeof req.query.surname === 'string' ? req.query.surname : '',
             dateOfBirth: typeof req.query.dateOfBirth === 'string' ? req.query.dateOfBirth : '',
             studentNumber: typeof req.query.studentNumber === 'string' ? req.query.studentNumber : '',
+            courseCode: typeof req.query.courseCode === 'string' ? req.query.courseCode : '',
           },
           (req as AuthedRequest).user,
         ),

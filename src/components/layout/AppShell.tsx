@@ -55,6 +55,7 @@ export const AppShell: React.FC<AppShellProps> = ({ user, onLogout, children }) 
                 <NavItem label="Events" path="/events" active={at('/events')} />
                 <NavItem label="Courses" path="/courses" active={at('/courses')} />
                 <NavItem label="Accommodation" path="/accommodation" active={at('/accommodation')} />
+                <NavItem label="Settings" path="/settings" active={at('/settings')} />
               </>
             )}
           </nav>
@@ -65,12 +66,11 @@ export const AppShell: React.FC<AppShellProps> = ({ user, onLogout, children }) 
               </span>
               <button
                 type="button"
-                className="inline-flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-sm font-medium text-foreground hover:bg-muted"
+                className="inline-flex size-8 items-center justify-center rounded-lg text-foreground hover:bg-muted"
                 aria-label="Log out"
                 onClick={onLogout}
               >
                 <Icon name="log-out" className="size-4" />
-                <span>Log out</span>
               </button>
             </div>
           ) : (

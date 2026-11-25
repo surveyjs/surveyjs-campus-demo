@@ -15,6 +15,7 @@ export interface Programme {
 export interface Student {
   id: string;
   studentNumber: string;
+  displayName: string;
   firstName: string;
   lastName: string;
   dateOfBirth: string;

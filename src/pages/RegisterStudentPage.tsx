@@ -29,6 +29,7 @@ export const RegisterStudentPage: React.FC<RegisterStudentPageProps> = ({ onOpen
         <SurveyRenderer
           id="student-registration"
           schema={schema}
+          hideTitle
           prefill={demoPrefill.studentRegistration}
           actions={[editFormAction('student-registration', 'Customize Form', () => onOpenFormBuilder('student-registration'))]}
           onSave={(data, model) => {

@@ -24,7 +24,7 @@ export interface FormCatalogEntry {
 export const FORM_CATALOG: FormCatalogEntry[] = [
   {
     id: 'login',
-    name: 'Campus Sign In',
+    name: 'Sign In',
     category: 'Authentication',
     description: 'Sign-in form with the demo roster.',
     schema: login,

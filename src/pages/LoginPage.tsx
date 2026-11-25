@@ -1,7 +1,6 @@
 import React, { useMemo, useRef } from 'react';
 import { SurveyError } from 'survey-core';
 import { authRepository } from '../repositories/authRepository';
-import { demoPrefill } from '../survey/demoPrefill';
 import { SurveyRenderer } from '../survey/SurveyRenderer';
 import { Session } from '../types/auth';
 import { PageHeading, panelClass, useDocumentTitle, useFormSchema } from '../ui/components';
@@ -27,8 +26,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   return (
     <>
       <PageHeading
-        title="Campus Sign In"
-        description="Choose a demo account to open the campus workspace. Every password is demo1234."
+        title="Sign In"
+        description="Choose a demo account to open the campus workspace."
         icon="log-in"
       />
       <section className={panelClass}>
@@ -36,7 +35,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
           id="login-form"
           schema={schema}
           hideTitle
-          prefill={demoPrefill.login}
           onSave={(data, model) => {
             if (pending.current) return;
             pending.current = true;

@@ -4,7 +4,14 @@
     {
       "name": "application",
       "elements": [
-        { "type": "text", "name": "student_number", "title": "Student ID", "isRequired": true, "placeholder": "e.g. STU-1150" },
+        {
+          "type": "dropdown",
+          "name": "student_number",
+          "title": "Student ID",
+          "isRequired": true,
+          "placeholder": "Select a student",
+          "choicesByUrl": { "url": "/api/students", "valueName": "studentNumber", "titleName": "displayName" }
+        },
         {
           "type": "dropdown",
           "name": "residence_id",

@@ -8,6 +8,7 @@ import { EventsPage } from './pages/EventsPage';
 import { LoginPage } from './pages/LoginPage';
 import { ManageStudentsPage } from './pages/ManageStudentsPage';
 import { RegisterStudentPage } from './pages/RegisterStudentPage';
+import { SettingsPage } from './pages/SettingsPage';
 import { StudentProfilePage } from './pages/StudentProfilePage';
 import { authRepository } from './repositories/authRepository';
 import { onUnauthorized } from './repositories/api';
@@ -135,6 +136,9 @@ export default function App() {
           path="/accommodation/:residenceId"
           element={<AccommodationPage user={currentUser} onOpenFormBuilder={openFormBuilder} showToast={showToast} ownStudentNumber={ownStudentNumber} />}
         />
+        {currentUser.role !== 'student' && (
+          <Route path="/settings" element={<SettingsPage currentUser={currentUser} />} />
+        )}
         <Route path="*" element={<Navigate to={home} replace />} />
       </Routes>
     );

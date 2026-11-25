@@ -5,10 +5,18 @@
     {
       "name": "registration",
       "elements": [
-        { "type": "text", "name": "student_number", "title": "Student ID", "isRequired": true, "placeholder": "e.g. STU-1002" },
+        {
+          "type": "dropdown",
+          "name": "student_number",
+          "title": "Student ID",
+          "isRequired": true,
+          "placeholder": "Select a student",
+          "choicesByUrl": { "url": "/api/students", "valueName": "studentNumber", "titleName": "displayName" }
+        },
         {
           "type": "dropdown",
           "name": "course_code",
+          "startWithNewLine": false,
           "title": "Course",
           "isRequired": true,
           "placeholder": "Select a course",

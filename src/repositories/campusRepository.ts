@@ -10,6 +10,7 @@ import {
   StudentProfile,
   SupportRequest,
 } from '../types/campus';
+import { Session } from '../types/auth';
 import { FormId } from '../types/forms';
 import { api } from './api';
 import { formRepository } from './formRepository';
@@ -49,6 +50,8 @@ export const campusRepository = {
     listeners.add(listener);
     return () => listeners.delete(listener);
   },
+
+  resetDemo: () => api<Session>('/admin/reset', { method: 'POST' }),
 
   students(query?: { name?: string; surname?: string; dateOfBirth?: string; studentNumber?: string }) {
     const params = new URLSearchParams();

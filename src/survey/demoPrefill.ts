@@ -1,10 +1,5 @@
 /** Sample answers for Prefill Demo Data. Edit forms keep the open record and do not use these values. */
 export const demoPrefill = {
-  login: {
-    username: 'sophie.wilson',
-    password: 'demo1234',
-    remember_me: true,
-  },
   studentSearch: {
     name: 'Emma Thompson',
     surname: 'Emma Thompson',
@@ -21,10 +16,10 @@ export const demoPrefill = {
     address: '8 North Court',
   },
   courseRegistration: {
-    student_number: 'STU-1002',
+    student_number: 'STU-1044',
     course_code: 'COMP2003',
     enrollment_type: 'Standard',
-    notes: 'Prerequisite Introduction to AI is complete.',
+    notes: 'Daniel Okonkwo has completed Introduction to AI.',
     prerequisite_confirmation: true,
   },
   newCourse: {

@@ -61,7 +61,7 @@ export const Modal: React.FC<ModalProps> = ({ heading, description, form = false
   <Dialog
     label={heading}
     className={cx(
-      'm-auto mb-(--campus-dock-offset) max-h-[calc(100dvh-var(--campus-dock-offset)-4rem)] rounded-xl ring-1 ring-foreground/10',
+      'top-0 right-0 bottom-(--campus-dock-offset) left-0 m-auto h-fit max-h-[calc(100dvh-var(--campus-dock-offset)-4rem)] rounded-xl ring-1 ring-foreground/10',
       form ? 'w-190 max-w-[calc(100vw-24px)] md:max-w-[calc(100vw-32px)]' : 'w-130 max-w-[calc(100vw-32px)]',
     )}
     onClose={onClose}

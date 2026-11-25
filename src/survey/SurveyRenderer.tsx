@@ -1,9 +1,15 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import { IAction, Model } from 'survey-core';
+import { IAction, Model, SvgRegistry } from 'survey-core';
 import { Survey } from 'survey-react-ui';
 import 'survey-core/survey-core.min.css';
 import 'survey-core/themes/adapters/shadcn-base-nova.css';
 import 'survey-core/themes/adapters/icons/lucide';
+
+// Lucide replaces icon-check-16x16 with an open stroke path. Checkbox CSS paints the
+// icon through fill on <use>, so that path stays invisible in the property grid and preview.
+const filledCheck16 =
+  '<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M14.0275 5.0275L6.5275 12.5275C6.3775 12.6775 6.1875 12.7475 5.9975 12.7475C5.8075 12.7475 5.6175 12.6775 5.4675 12.5275L2.4675 9.5275C2.1775 9.2375 2.1775 8.7575 2.4675 8.4675C2.7575 8.1775 3.2375 8.1775 3.5275 8.4675L5.9975 10.9375L12.9675 3.9675C13.2575 3.6775 13.7375 3.6775 14.0275 3.9675C14.3175 4.2575 14.3175 4.7375 14.0275 5.0275Z"/></svg>';
+SvgRegistry.registerIcon('icon-check-16x16', filledCheck16);
 import { demoTools } from '../theme/demoTools';
 
 export type SurveyNavigationAction = Partial<IAction> & { id: string };
